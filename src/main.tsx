@@ -1,9 +1,14 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import App from './App.tsx'
+import "@kleros/ui-components-library/style.css";
+import "./global.css";
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import App from "./App.tsx";
 
-createRoot(document.getElementById('root')!).render(
+//Force dark theme
+document.documentElement.classList.add("dark");
+
+createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <App />
-  </StrictMode>,
-)
+  </StrictMode>
+);
