@@ -1,5 +1,5 @@
-import { Button } from "@kleros/ui-components-library";
+import ConnectWallet from "../ConnectWallet/ConnectWallet";
 
 export default function Header() {
-  return <Button text="Connect Wallet" variant="primary" />;
+  return <ConnectWallet />;
 }

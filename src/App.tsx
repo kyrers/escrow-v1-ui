@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router";
 import { Providers } from "./Providers";
-import Home from "./components/Home";
+import Home from "./components/Home/Home";
 import Layout from "./layout/Layout";
 
 function App() {
