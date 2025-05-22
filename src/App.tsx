@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router";
-import { Providers } from "./Providers";
+import { Providers } from "./providers";
 import Home from "./components/Home/Home";
 import Layout from "./layout/Layout";
 

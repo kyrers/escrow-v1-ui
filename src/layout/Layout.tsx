@@ -8,7 +8,6 @@ const Container = styled.div`
   flex-direction: column;
   min-height: 100%;
   width: 100%;
-  padding: 8px;
 `;
 
 export default function Layout() {
