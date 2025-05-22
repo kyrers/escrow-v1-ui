@@ -8,13 +8,16 @@ const Container = styled.div`
   position: sticky;
   width: 100%;
   z-index: 10;
+  background-color: ${({ theme }) => theme.colors.lightGrey};
+  padding: 8px;
+  justify-content: space-between;
 `;
 
 export default function Header() {
   return (
     <Container>
-      <ToggleTheme />
       <ConnectWallet />
+      <ToggleTheme />
     </Container>
   );
 }

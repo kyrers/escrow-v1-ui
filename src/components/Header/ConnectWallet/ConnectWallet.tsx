@@ -1,6 +1,6 @@
 import { useAppKit, useAppKitState } from "@reown/appkit/react";
 import { useAccount } from "wagmi";
-import { Button } from "@kleros/ui-components-library";
+import { Button, Tag } from "@kleros/ui-components-library";
 
 const ConnectButton: React.FC = () => {
   const { open } = useAppKit();
@@ -20,10 +20,6 @@ export default function ConnectWallet() {
   const { isConnected, chain, address } = useAccount();
 
   if (isConnected) {
-    return (
-      <p>
-        {address} | {chain?.name}
-      </p>
-    );
+    return <Tag text={`${address} | ${chain?.name}`} />;
   } else return <ConnectButton />;
 }
