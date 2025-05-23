@@ -1,4 +1,5 @@
 export interface KlerosTheme {
+  mode: "light" | "dark";
   colors: {
     primaryPurple: string;
     secondaryPurple: string;

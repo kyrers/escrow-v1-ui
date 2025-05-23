@@ -8,7 +8,8 @@ export const IconButton = styled(Button)`
   width: 32px;
   height: 32px;
   path {
-    fill: ${({ theme }) => theme.colors.primaryBlue};
+    /* dark mode secondary text color */
+    fill: #becce5;
   }
 
   &:hover {

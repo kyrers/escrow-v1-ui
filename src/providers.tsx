@@ -1,19 +1,18 @@
 import { WagmiProvider } from "wagmi";
-import { wagmiAdapter } from "./config/reown";
+import { wagmiAdapter } from "config/reown";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { theme } from "./theme/theme";
-import { ThemeProvider } from "styled-components";
+import { CustomThemeProvider } from "context/theme/CustomThemeProvider";
 
 const queryClient = new QueryClient();
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <ThemeProvider theme={theme}>
+    <CustomThemeProvider>
       <WagmiProvider config={wagmiAdapter.wagmiConfig}>
         <QueryClientProvider client={queryClient}>
           {children}
         </QueryClientProvider>
       </WagmiProvider>
-    </ThemeProvider>
+    </CustomThemeProvider>
   );
 }

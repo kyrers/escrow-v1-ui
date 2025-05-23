@@ -9,7 +9,7 @@ const Container = styled.div`
 
 const CustomTag = styled(Tag)`
   font-weight: bold;
-  background-color: ${({ theme }) => theme.colors.mediumBlue};
+  background-color: transparent;
 
   &:hover {
     opacity: 0.8;
@@ -23,10 +23,13 @@ const MenuContainer = styled.div`
   width: 100%;
   gap: 8px;
   margin-top: 8px;
-  padding: 8px;
   align-items: center;
   border-radius: ${({ theme }) => theme.radius.base};
-  background-color: ${({ theme }) => theme.colors.mediumBlue};
+  background-color: ${({ theme }) =>
+    theme.mode === "dark"
+      ? theme.colors.lightBlue
+      : theme.colors.primaryPurple};
+  box-shadow: ${({ theme }) => theme.shadows.default};
 `;
 
 const CustomButton = styled(Button)`
@@ -34,7 +37,9 @@ const CustomButton = styled(Button)`
   background-color: transparent;
 
   p {
-    color: ${({ theme }) => theme.colors.secondaryText};
+    font-size: 14px;
+    /* dark mode secondary text color */
+    color: #becce5;
 
     &:hover {
       opacity: 0.8;

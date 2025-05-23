@@ -1,5 +1,5 @@
 import { IconButton } from "components/common/IconButton";
-import QuestionCircle from "assets/question-circle.svg?react";
+import InfoCircleFull from "assets/info-circle-full.svg?react";
 
 export default function Tutorial() {
   return (
@@ -8,7 +8,7 @@ export default function Tutorial() {
       target="_blank"
       rel="noopener noreferrer"
     >
-      <IconButton small icon={<QuestionCircle />} text="" />
+      <IconButton small icon={<InfoCircleFull />} text="" />
     </a>
   );
 }

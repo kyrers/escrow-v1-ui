@@ -2,6 +2,7 @@ import type { KlerosTheme } from "./types";
 
 //Mapped from https://github.com/kleros/ui-components-library/blob/main/src/styles/theme.css
 export const theme: KlerosTheme = {
+  mode: "dark",
   colors: {
     primaryPurple: "var(--klerosUIComponentsPrimaryPurple)",
     secondaryPurple: "var(--klerosUIComponentsSecondaryPurple)",
