@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import ConnectWallet from "./ConnectWallet/ConnectWallet";
 import { ToggleTheme } from "./ToggleTheme/ThemeToggle";
+import KlerosEscrowLogo from "../../assets/kleros.svg?react";
 
 const Container = styled.div`
   display: flex;
@@ -8,16 +9,33 @@ const Container = styled.div`
   position: sticky;
   width: 100%;
   z-index: 10;
-  background-color: ${({ theme }) => theme.colors.lightGrey};
+  background-color: ${({ theme }) => theme.colors.mediumBlue};
   padding: 8px;
   justify-content: space-between;
+`;
+
+const EscrowLogo = styled(KlerosEscrowLogo)`
+  width: auto;
+  height: 46px;
+  path#ESCROW {
+    fill: ${({ theme }) => theme.colors.primaryText};
+  }
+`;
+
+const OptionsContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 16px;
 `;
 
 export default function Header() {
   return (
     <Container>
-      <ConnectWallet />
-      <ToggleTheme />
+      <EscrowLogo />
+      <OptionsContainer>
+        <ConnectWallet />
+        <ToggleTheme />
+      </OptionsContainer>
     </Container>
   );
 }

@@ -20,6 +20,6 @@ export default function ConnectWallet() {
   const { isConnected, chain, address } = useAccount();
 
   if (isConnected) {
-    return <Tag text={`${address} | ${chain?.name}`} />;
+    return <Tag active text={`${address} | ${chain?.name}`} />;
   } else return <ConnectButton />;
 }
