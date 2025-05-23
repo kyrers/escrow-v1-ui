@@ -1,14 +1,17 @@
-import { Button } from "@kleros/ui-components-library";
-import { useTheme } from "../../../hooks/useTheme";
+import Moon from "assets/moon.svg?react";
+import Sun from "assets/sun.svg?react";
+import { IconButton } from "components/common/IconButton";
+import { useTheme } from "hooks/useTheme";
 
-export function ToggleTheme() {
+export default function ToggleTheme() {
   const { theme, toggleTheme } = useTheme();
 
   return (
-    <Button
+    <IconButton
       onPress={toggleTheme}
-      variant="secondary"
-      text={theme === "light" ? "🌙" : "☀️"}
+      small
+      icon={theme === "light" ? <Moon /> : <Sun />}
+      text=""
     />
   );
 }

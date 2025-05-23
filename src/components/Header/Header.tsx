@@ -1,7 +1,8 @@
 import styled from "styled-components";
+import KlerosEscrowLogo from "assets/kleros.svg?react";
 import ConnectWallet from "./ConnectWallet/ConnectWallet";
-import { ToggleTheme } from "./ToggleTheme/ThemeToggle";
-import KlerosEscrowLogo from "../../assets/kleros.svg?react";
+import ToggleTheme from "./ToggleTheme/ThemeToggle";
+import Tutorial from "./Tutorial/Tutorial";
 
 const Container = styled.div`
   display: flex;
@@ -9,8 +10,8 @@ const Container = styled.div`
   position: sticky;
   width: 100%;
   z-index: 10;
-  background-color: ${({ theme }) => theme.colors.mediumBlue};
-  padding: 8px;
+  background-color: ${({ theme }) => theme.colors.tintPurple};
+  padding: 8px 16px;
   justify-content: space-between;
 `;
 
@@ -35,6 +36,7 @@ export default function Header() {
       <OptionsContainer>
         <ConnectWallet />
         <ToggleTheme />
+        <Tutorial />
       </OptionsContainer>
     </Container>
   );
