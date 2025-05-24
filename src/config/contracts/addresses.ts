@@ -1,0 +1,34 @@
+import { mainnet, sepolia } from "@reown/appkit/networks";
+
+interface Addresses {
+  BLOCKCHAIN_NON_TECHNICAL: `0x${string}`;
+  GENERAL_COURT: `0x${string}`;
+}
+
+export const MULTIPLE_ARBITRABLE_TRANSACTION_ADDRESS: Record<
+  number,
+  Addresses
+> = {
+  [mainnet.id]: {
+    BLOCKCHAIN_NON_TECHNICAL: "0xE2Dd8CCe2c33a04215074ADb4B5820B765d8Ed9D",
+    GENERAL_COURT: "0x0d67440946949fe293b45c52efd8a9b3d51e2522",
+  },
+  [sepolia.id]: {
+    BLOCKCHAIN_NON_TECHNICAL: "0x338f1A474e0FB0ae9E913cFA3d7c6Aa19b92015B",
+    GENERAL_COURT: "0x9262c1c7810571B189db83F945e7e8b67abcE1c8",
+  },
+};
+
+export const MULTIPLE_ARBITRABLE_TOKEN_TRANSACTION_ADDRESS: Record<
+  number,
+  Addresses
+> = {
+  [mainnet.id]: {
+    BLOCKCHAIN_NON_TECHNICAL: "0xC25a0b9681ABF6F090AEd71a8c08fB564b41dab6",
+    GENERAL_COURT: "0xBCf0d1AD453728F75e9cFD4358ED187598A45e6c",
+  },
+  [sepolia.id]: {
+    BLOCKCHAIN_NON_TECHNICAL: "0x58fc7e398B4a1886695ab2C7fE7c31F49393a8c5",
+    GENERAL_COURT: "0x6048002b6E93A4A5d93E902F2427D7472790aC97",
+  },
+};

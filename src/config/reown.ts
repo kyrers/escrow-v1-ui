@@ -20,6 +20,8 @@ export const wagmiAdapter = new WagmiAdapter({
   transports: TRANSPORTS,
 });
 
+export const wagmiConfig = wagmiAdapter.wagmiConfig;
+
 createAppKit({
   adapters: [wagmiAdapter],
   networks: networks,

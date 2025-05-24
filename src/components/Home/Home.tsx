@@ -1,3 +1,7 @@
+import { useTransactions } from "hooks/useTransactions";
+
 export default function Home() {
-  return <h1>Hello World</h1>;
+  const { data: transactions } = useTransactions();
+  console.log("## transactions: ", transactions);
+  return <div>Hello World</div>;
 }
