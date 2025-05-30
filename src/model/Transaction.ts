@@ -10,6 +10,7 @@ export enum TransactionStatus {
 
 export interface Transaction {
   id: bigint;
+  createdAt: string;
   arbitrableAddress: string;
   metaEvidence: MetaEvidence;
   party: string;

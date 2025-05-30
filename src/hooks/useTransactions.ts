@@ -8,12 +8,12 @@ import { multicall } from "wagmi/actions";
 import { useQuery } from "@tanstack/react-query";
 import { MULTIPLE_ARBITRABLE_TRANSACTION_ABI } from "config/contracts/abi/multipleArbitrableTransaction";
 import { MULTIPLE_ARBITRABLE_TOKEN_TRANSACTION_ABI } from "config/contracts/abi/mutlipleArbitrableTokenTransaction";
-import { getLogs } from "viem/actions";
+import { getBlock, getLogs } from "viem/actions";
 import { parseAbiItem, type Client, type GetLogsReturnType } from "viem";
 import { useMemo } from "react";
-import { ipfsFetch } from "../utils/ipfs";
-import type { MetaEvidence } from "src/model/MetaEvidence";
-import type { Transaction } from "src/model/Transaction";
+import { ipfsFetch } from "utils/ipfs";
+import type { MetaEvidence } from "model/MetaEvidence";
+import type { Transaction } from "model/Transaction";
 
 //Batch fetch all tx IDs for the connected wallet, from all contracts
 async function fetchTxIDsByContract(
@@ -109,6 +109,16 @@ async function fetchLogsContentFromIPFS(logs: MetaEvidenceLogs) {
   );
 }
 
+//Fetch the timestamps for the block numbers, so we can display the transaction date
+async function fetchBlockTimestamps(client: Client, blockNumbers: bigint[]) {
+  return await Promise.all(
+    blockNumbers.map(async (blockNumber) => {
+      const block = await getBlock(client, { blockNumber });
+      return block.timestamp;
+    })
+  );
+}
+
 export function useTransactions() {
   const { address, chain } = useAccount();
   const client = useClient();
@@ -165,6 +175,12 @@ export function useTransactions() {
             metaEvidenceLogs
           );
 
+          //Batch fetch the timestamps for the block numbers
+          const blockTimestamps = await fetchBlockTimestamps(
+            client,
+            metaEvidenceLogs.map((log) => log.blockNumber)
+          );
+
           //Map the results to a Transaction object
           const txs = txDetails
             .map((tx, index) => {
@@ -180,6 +196,13 @@ export function useTransactions() {
               //Create a transaction object with the information we need
               const formattedTx: Transaction = {
                 id: txID,
+                createdAt: new Date(
+                  parseInt(blockTimestamps[index].toString()) * 1000
+                ).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                }),
                 arbitrableAddress: contractAddress,
                 metaEvidence: metaEvidence,
                 party: metaEvidence?.aliases[address],
@@ -190,7 +213,7 @@ export function useTransactions() {
 
               return formattedTx;
             })
-            .filter((tx) => tx !== null); // remove nulls as we don't have the needed information to display
+            .filter((tx) => tx !== null); //remove nulls as we don't have the needed information to display
 
           return txs;
         })
@@ -200,6 +223,6 @@ export function useTransactions() {
       return txsByContract.flat();
     },
     enabled: !!chain && !!address,
-    refetchOnWindowFocus: false,
+    initialData: [],
   });
 }
