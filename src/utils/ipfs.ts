@@ -1,4 +1,4 @@
-import { IPFS_UPLOAD_URL, IPFS_GATEWAY_URL } from "../config/ipfs";
+import { IPFS_UPLOAD_URL, IPFS_GATEWAY_URL } from "config/ipfs";
 
 export async function ipfsPost(
   fileName: string,
