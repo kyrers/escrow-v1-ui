@@ -7,13 +7,15 @@ export default defineConfig({
   plugins: [react(), svgr()],
   resolve: {
     alias: {
+      assets: "/src/assets",
       components: "/src/components",
+      config: "/src/config",
       context: "/src/context",
       hooks: "/src/hooks",
-      theme: "/src/theme",
-      assets: "/src/assets",
-      config: "/src/config",
       layout: "/src/layout",
+      model: "/src/model",
+      theme: "/src/theme",
+      utils: "/src/utils",
     },
   },
 });
