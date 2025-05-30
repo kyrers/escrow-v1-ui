@@ -206,9 +206,10 @@ export function useTransactions() {
                 arbitrableAddress: contractAddress,
                 metaEvidence: metaEvidence,
                 party: metaEvidence?.aliases[address],
-                escrowAmount: tx.result[2].toString(),
+                escrowAmount: tx.result[2].toString(), //amount in escrow
                 originalAmount: metaEvidence?.amount,
-                status: tx.result[tx.result.length - 1] as number,
+                status: tx.result[tx.result.length - 1] as number, //status
+                lastInteraction: Number(tx.result[tx.result.length - 2]), //last interaction
               };
 
               return formattedTx;
@@ -220,7 +221,9 @@ export function useTransactions() {
       );
 
       //Return a single array of all transactions
-      return txsByContract.flat();
+      return txsByContract
+        .flat()
+        .sort((a, b) => b.lastInteraction - a.lastInteraction);
     },
     enabled: !!chain && !!address,
     initialData: [],
