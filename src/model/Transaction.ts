@@ -11,6 +11,7 @@ export enum TransactionStatus {
 export interface Transaction {
   id: bigint;
   createdAt: string;
+  lastInteraction: number;
   arbitrableAddress: string;
   metaEvidence: MetaEvidence;
   party: string;
