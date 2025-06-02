@@ -1,6 +1,7 @@
 import { Card, Tag } from "@kleros/ui-components-library";
-import { TransactionStatus, type Transaction } from "model/Transaction";
+import { type Transaction } from "model/Transaction";
 import styled from "styled-components";
+import { addressToShortString } from "utils/common";
 
 const StyledCard = styled(Card)`
   display: flex;
@@ -22,10 +23,26 @@ const CardEdge = styled.div`
   height: 40px;
 `;
 
+const StatusTag = styled(Tag)<{ status: string }>`
+  --status-color: ${({ theme, status }) =>
+    status === "Completed"
+      ? theme.colors.success
+      : status === "Disputed"
+      ? theme.colors.error
+      : theme.colors.warning};
+
+  pointer-events: none;
+  border-color: var(--status-color);
+
+  p {
+    font-weight: bold;
+    color: var(--status-color);
+  }
+`;
+
 const CardBody = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   gap: 8px;
   padding: 8px;
   height: 120px;
@@ -33,14 +50,24 @@ const CardBody = styled.div`
 
 const Title = styled.p`
   font-weight: bold;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 `;
 
-const Description = styled.p``;
+const Description = styled.p`
+  display: -webkit-box;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  word-break: break-all;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+`;
 
-const AmountAndId = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+const AmountTag = styled(Tag)`
+  pointer-events: none;
+  text-transform: capitalize;
+  font-weight: bold;
 `;
 
 interface Props {
@@ -51,19 +78,23 @@ export default function TransactionCard({ transaction }: Props) {
   return (
     <StyledCard round hover className="w-[1/3]">
       <CardEdge>
-        <Tag text={TransactionStatus[transaction.status].toString()} />
-        <p>{transaction.createdAt}</p>
+        <StatusTag
+          active
+          status={transaction.status}
+          text={transaction.status}
+        />
+        <AmountTag
+          active
+          text={`${transaction.party}: ${transaction.originalAmount} ${transaction.metaEvidence.token.ticker}`}
+        />
       </CardEdge>
       <CardBody>
         <Title>{transaction.metaEvidence.title}</Title>
         <Description>{transaction.metaEvidence.description}</Description>
-        <AmountAndId>
-          <p>Amount: {transaction.originalAmount}</p>
-          <p>ID: {`${transaction.id}`}</p>
-        </AmountAndId>
       </CardBody>
       <CardEdge>
-        <p>{transaction.party}</p>
+        <Tag text={addressToShortString(transaction.otherParty)} />
+        <p>{transaction.createdAt}</p>
       </CardEdge>
     </StyledCard>
   );
