@@ -1,6 +1,7 @@
 import { Button, Tag } from "@kleros/ui-components-library";
 import { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
+import { addressToShortString } from "utils/common";
 import { useAccount, useDisconnect } from "wagmi";
 
 const Container = styled.div`
@@ -66,9 +67,7 @@ export default function ConnectedMenu() {
     <Container ref={containerRef}>
       <CustomTag
         active
-        text={`${chain?.name} | ${address?.slice(0, 6)}...${address?.slice(
-          -4
-        )}`}
+        text={`${chain?.name} | ${addressToShortString(address ?? "")}`}
         onPress={() => setIsMenuOpen(!isMenuOpen)}
       />
       {isMenuOpen && (

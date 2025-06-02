@@ -13,7 +13,8 @@ import { parseAbiItem, type Client, type GetLogsReturnType } from "viem";
 import { useMemo } from "react";
 import { ipfsFetch } from "utils/ipfs";
 import type { MetaEvidence } from "model/MetaEvidence";
-import type { Transaction } from "model/Transaction";
+import { TransactionStatus, type Transaction } from "model/Transaction";
+import { mapTransactionStatus } from "utils/transaction";
 
 //Batch fetch all tx IDs for the connected wallet, from all contracts
 async function fetchTxIDsByContract(
@@ -193,6 +194,10 @@ export function useTransactions() {
               //Get the corresponding txID - we can rely on the order of multicall
               const txID = txIDs[index];
 
+              const txAmountInEscrow = tx.result[2].toString(); //amount in escrow
+              const status = tx.result[tx.result.length - 1] as number; //status
+              const userParty = metaEvidence?.aliases[address];
+
               //Create a transaction object with the information we need
               const formattedTx: Transaction = {
                 id: txID,
@@ -205,11 +210,18 @@ export function useTransactions() {
                 }),
                 arbitrableAddress: contractAddress,
                 metaEvidence: metaEvidence,
-                party: metaEvidence?.aliases[address],
-                escrowAmount: tx.result[2].toString(), //amount in escrow
+                party: userParty,
+                otherParty:
+                  userParty === "sender"
+                    ? metaEvidence.receiver
+                    : metaEvidence.sender,
+                escrowAmount: txAmountInEscrow,
                 originalAmount: metaEvidence?.amount,
-                status: tx.result[tx.result.length - 1] as number, //status
-                lastInteraction: Number(tx.result[tx.result.length - 2]), //last interaction
+                status: mapTransactionStatus(
+                  TransactionStatus[status],
+                  txAmountInEscrow
+                ),
+                lastInteraction: Number(tx.result[tx.result.length - 2]),
               };
 
               return formattedTx;

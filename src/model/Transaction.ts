@@ -15,7 +15,8 @@ export interface Transaction {
   arbitrableAddress: string;
   metaEvidence: MetaEvidence;
   party: string;
+  otherParty: string;
   escrowAmount: string;
   originalAmount: string;
-  status: number;
+  status: string;
 }
