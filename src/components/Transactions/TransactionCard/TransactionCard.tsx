@@ -14,6 +14,9 @@ const StyledCard = styled(Card)`
   p {
     font-size: 14px;
   }
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.xs}) {
+    height: 280px;
 `;
 
 const CardEdge = styled.div`
@@ -23,6 +26,13 @@ const CardEdge = styled.div`
   background-color: ${({ theme }) => theme.colors.tintPurple};
   padding: 8px;
   height: 40px;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.xs}) {
+    height: 80px;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+  }
 `;
 
 const CardBody = styled.div`
@@ -30,7 +40,7 @@ const CardBody = styled.div`
   flex-direction: column;
   gap: 8px;
   padding: 8px;
-  height: 120px;
+  flex: 1;
 `;
 
 const Title = styled.p`
@@ -62,7 +72,7 @@ interface Props {
 export default function TransactionCard({ transaction }: Props) {
   return (
     <Link
-      to={`/transaction/${transaction.id}/${transaction.arbitrableAddress}`}
+      to={`/transaction/${transaction.arbitrableAddress}/${transaction.id}`}
     >
       <StyledCard round hover className="w-[1/3]">
         <CardEdge>

@@ -18,6 +18,12 @@ const Container = styled.header`
       : theme.colors.primaryPurple};
   padding: 8px 16px;
   justify-content: space-between;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.xs}) {
+    height: 120px;
+    flex-direction: column;
+    align-items: center;
+  }
 `;
 
 const EscrowLogo = styled(KlerosEscrowLogo)`
