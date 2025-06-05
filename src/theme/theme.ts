@@ -39,8 +39,10 @@ export const theme: KlerosTheme = {
   },
   radius: {
     base: "var(--klerosUIComponentsBaseRadius)",
+    boxDefault: "18px",
   },
   breakpoints: {
+    xs: "430px",
     lg: "var(--breakpoint-lg)",
   },
   animations: {

@@ -11,6 +11,9 @@ const Container = styled.div`
 const CustomTag = styled(Tag)`
   font-weight: bold;
   background-color: transparent;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 
   &:hover {
     opacity: 0.8;

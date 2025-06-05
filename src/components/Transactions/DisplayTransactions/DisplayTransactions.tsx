@@ -2,7 +2,6 @@ import { useTransactions } from "hooks/useTransactions";
 import TransactionCard from "../TransactionCard/TransactionCard";
 import styled from "styled-components";
 import { BaseSkeleton } from "components/Common/Skeleton/BaseSkeleton";
-import { NotFoundMessage } from "components/Common/NotFoundMessage/NotFoundMessage";
 
 const CardContainer = styled.div`
   display: grid;
@@ -23,30 +22,16 @@ const SkeletonCard = styled(BaseSkeleton)`
 export default function DisplayTransactions() {
   const { data: transactions, isFetching } = useTransactions();
 
-  if (isFetching) {
-    return (
-      <CardContainer>
-        {[...Array(9)].map((_, i) => (
-          <SkeletonCard key={i} />
-        ))}
-      </CardContainer>
-    );
-  }
-
-  if (transactions.length === 0) {
-    return (
-      <NotFoundMessage>No transactions found for this wallet</NotFoundMessage>
-    );
-  }
-
   return (
     <CardContainer>
-      {transactions.map((transaction) => (
-        <TransactionCard
-          key={`${transaction.id}-${transaction.arbitrableAddress}`}
-          transaction={transaction}
-        />
-      ))}
+      {isFetching
+        ? [...Array(9)].map((_, i) => <SkeletonCard key={i} />)
+        : transactions.map((transaction) => (
+            <TransactionCard
+              key={`${transaction.id}-${transaction.arbitrableAddress}`}
+              transaction={transaction}
+            />
+          ))}
     </CardContainer>
   );
 }
