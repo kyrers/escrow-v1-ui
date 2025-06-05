@@ -1,7 +1,9 @@
 import { Card, Tag } from "@kleros/ui-components-library";
-import { type Transaction } from "model/Transaction";
+import { type TransactionMini } from "model/Transaction";
+import { Link } from "react-router";
 import styled from "styled-components";
 import { addressToShortString } from "utils/common";
+import { TransactionStatusTag } from "components/Transactions/TransactionStatusTag/TransactionStatusTag";
 
 const StyledCard = styled(Card)`
   display: flex;
@@ -21,23 +23,6 @@ const CardEdge = styled.div`
   background-color: ${({ theme }) => theme.colors.tintPurple};
   padding: 8px;
   height: 40px;
-`;
-
-const StatusTag = styled(Tag)<{ status: string }>`
-  --status-color: ${({ theme, status }) =>
-    status === "Completed"
-      ? theme.colors.success
-      : status === "Disputed"
-      ? theme.colors.error
-      : theme.colors.warning};
-
-  pointer-events: none;
-  border-color: var(--status-color);
-
-  p {
-    font-weight: bold;
-    color: var(--status-color);
-  }
 `;
 
 const CardBody = styled.div`
@@ -71,31 +56,35 @@ const AmountTag = styled(Tag)`
 `;
 
 interface Props {
-  transaction: Transaction;
+  transaction: TransactionMini;
 }
 
 export default function TransactionCard({ transaction }: Props) {
   return (
-    <StyledCard round hover className="w-[1/3]">
-      <CardEdge>
-        <StatusTag
-          active
-          status={transaction.status}
-          text={transaction.status}
-        />
-        <AmountTag
-          active
-          text={`${transaction.party}: ${transaction.originalAmount} ${transaction.metaEvidence.token.ticker}`}
-        />
-      </CardEdge>
-      <CardBody>
-        <Title>{transaction.metaEvidence.title}</Title>
-        <Description>{transaction.metaEvidence.description}</Description>
-      </CardBody>
-      <CardEdge>
-        <Tag text={addressToShortString(transaction.otherParty)} />
-        <p>{transaction.createdAt}</p>
-      </CardEdge>
-    </StyledCard>
+    <Link
+      to={`/transaction/${transaction.id}/${transaction.arbitrableAddress}`}
+    >
+      <StyledCard round hover className="w-[1/3]">
+        <CardEdge>
+          <TransactionStatusTag
+            active
+            status={transaction.status}
+            text={transaction.status}
+          />
+          <AmountTag
+            active
+            text={`${transaction.userPartyLabel}: ${transaction.metaEvidence.amount} ${transaction.metaEvidence.token.ticker}`}
+          />
+        </CardEdge>
+        <CardBody>
+          <Title>{transaction.metaEvidence.title}</Title>
+          <Description>{transaction.metaEvidence.description}</Description>
+        </CardBody>
+        <CardEdge>
+          <Tag text={addressToShortString(transaction.otherPartyAddress)} />
+          <p>{transaction.createdAt}</p>
+        </CardEdge>
+      </StyledCard>
+    </Link>
   );
 }

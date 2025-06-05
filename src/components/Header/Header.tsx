@@ -3,6 +3,7 @@ import KlerosEscrowLogo from "assets/kleros.svg?react";
 import ConnectWallet from "./ConnectWallet/ConnectWallet";
 import ToggleTheme from "./ToggleTheme/ToggleTheme";
 import Tutorial from "./Tutorial/Tutorial";
+import { Link } from "react-router";
 
 const Container = styled.header`
   display: flex;
@@ -33,7 +34,9 @@ const OptionsContainer = styled.div`
 export default function Header() {
   return (
     <Container>
-      <EscrowLogo />
+      <Link to="/">
+        <EscrowLogo />
+      </Link>
       <OptionsContainer>
         <ConnectWallet />
         <ToggleTheme />

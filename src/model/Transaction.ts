@@ -8,15 +8,23 @@ export enum TransactionStatus {
   Resolved,
 }
 
-export interface Transaction {
+interface BaseTransaction {
   id: bigint;
   createdAt: string;
   lastInteraction: number;
   arbitrableAddress: string;
   metaEvidence: MetaEvidence;
-  party: string;
-  otherParty: string;
-  escrowAmount: string;
-  originalAmount: string;
   status: string;
+}
+
+//Used for cards
+export interface TransactionMini extends BaseTransaction {
+  userPartyLabel: string;
+  otherPartyAddress: string;
+}
+
+//Used for detailed view
+export interface Transaction extends BaseTransaction {
+  amountInEscrow: string;
+  blockExplorerLink: string;
 }
