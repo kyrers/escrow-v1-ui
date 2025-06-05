@@ -13,8 +13,9 @@ import { parseAbiItem, type Client, type GetLogsReturnType } from "viem";
 import { useMemo } from "react";
 import { ipfsFetch } from "utils/ipfs";
 import type { MetaEvidence } from "model/MetaEvidence";
-import { TransactionStatus, type Transaction } from "model/Transaction";
+import { TransactionStatus, type TransactionMini } from "model/Transaction";
 import { mapTransactionStatus } from "utils/transaction";
+import { QUERY_KEYS } from "config/queryKeys";
 
 //Batch fetch all tx IDs for the connected wallet, from all contracts
 async function fetchTxIDsByContract(
@@ -137,8 +138,8 @@ export function useTransactions() {
     ];
   }, [chain]);
 
-  return useQuery<Transaction[]>({
-    queryKey: ["transactions", address, chain?.id],
+  return useQuery<TransactionMini[]>({
+    queryKey: [QUERY_KEYS.transactionList, address, chain?.id],
     queryFn: async () => {
       if (!chain || !address || !client) return [];
 
@@ -182,7 +183,7 @@ export function useTransactions() {
             metaEvidenceLogs.map((log) => log.blockNumber)
           );
 
-          //Map the results to a Transaction object
+          //Map the results to a TransactionMini object
           const txs = txDetails
             .map((tx, index) => {
               //Get the corresponding meta evidence content - we can rely on the order of Promise.all
@@ -198,8 +199,8 @@ export function useTransactions() {
               const status = tx.result[tx.result.length - 1] as number; //status
               const userParty = metaEvidence?.aliases[address];
 
-              //Create a transaction object with the information we need
-              const formattedTx: Transaction = {
+              //Create a TransactionMini object with the information we need
+              const formattedTx: TransactionMini = {
                 id: txID,
                 createdAt: new Date(
                   parseInt(blockTimestamps[index].toString()) * 1000
@@ -210,13 +211,11 @@ export function useTransactions() {
                 }),
                 arbitrableAddress: contractAddress,
                 metaEvidence: metaEvidence,
-                party: userParty,
-                otherParty:
+                userPartyLabel: userParty,
+                otherPartyAddress:
                   userParty === "sender"
                     ? metaEvidence.receiver
                     : metaEvidence.sender,
-                escrowAmount: txAmountInEscrow,
-                originalAmount: metaEvidence?.amount,
                 status: mapTransactionStatus(
                   TransactionStatus[status],
                   txAmountInEscrow

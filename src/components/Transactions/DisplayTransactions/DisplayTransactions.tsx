@@ -2,6 +2,7 @@ import { useTransactions } from "hooks/useTransactions";
 import TransactionCard from "../TransactionCard/TransactionCard";
 import styled from "styled-components";
 import { BaseSkeleton } from "components/Common/Skeleton/BaseSkeleton";
+import { NotFoundMessage } from "components/Common/NotFoundMessage/NotFoundMessage";
 
 const CardContainer = styled.div`
   display: grid;
@@ -19,10 +20,6 @@ const SkeletonCard = styled(BaseSkeleton)`
   height: 200px;
 `;
 
-const EmptyMessage = styled.p`
-  color: ${({ theme }) => theme.colors.secondaryText};
-`;
-
 export default function DisplayTransactions() {
   const { data: transactions, isFetching } = useTransactions();
 
@@ -37,7 +34,9 @@ export default function DisplayTransactions() {
   }
 
   if (transactions.length === 0) {
-    return <EmptyMessage>No transactions found for this wallet</EmptyMessage>;
+    return (
+      <NotFoundMessage>No transactions found for this wallet</NotFoundMessage>
+    );
   }
 
   return (
