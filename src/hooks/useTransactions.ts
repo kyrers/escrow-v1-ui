@@ -9,13 +9,14 @@ import { useQuery } from "@tanstack/react-query";
 import { MULTIPLE_ARBITRABLE_TRANSACTION_ABI } from "config/contracts/abi/multipleArbitrableTransaction";
 import { MULTIPLE_ARBITRABLE_TOKEN_TRANSACTION_ABI } from "config/contracts/abi/mutlipleArbitrableTokenTransaction";
 import { getBlock, getLogs } from "viem/actions";
-import { parseAbiItem, type Client, type GetLogsReturnType } from "viem";
+import { type Client, type GetLogsReturnType } from "viem";
 import { useMemo } from "react";
 import { ipfsFetch } from "utils/ipfs";
 import type { MetaEvidence } from "model/MetaEvidence";
 import { TransactionStatus, type TransactionMini } from "model/Transaction";
 import { mapTransactionStatus } from "utils/transaction";
 import { QUERY_KEYS } from "config/queryKeys";
+import { metaEvidenceEvent } from "config/contracts/events";
 
 //Batch fetch all tx IDs for the connected wallet, from all contracts
 async function fetchTxIDsByContract(
@@ -69,11 +70,6 @@ async function fetchContractTxDetails(
     })),
   });
 }
-
-//Parse the meta evidence event only once
-const metaEvidenceEvent = parseAbiItem(
-  "event MetaEvidence(uint indexed _metaEvidenceID, string _evidence)"
-);
 
 //Batch fetch meta evidence logs for the txIDs, for a given contract
 async function fetchContractMetaEvidenceLogs(
