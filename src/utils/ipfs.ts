@@ -37,7 +37,7 @@ export async function ipfsFetch(uri: string): Promise<unknown> {
   }
 }
 
-const getIpfsUrl = (url: string) => {
+export const getIpfsUrl = (url: string) => {
   const formatedIPFSPath = getFormattedPath(url);
   return `${IPFS_GATEWAY_URL}${formatedIPFSPath}`;
 };
