@@ -1,9 +1,15 @@
 import styled from "styled-components";
-import { AlertMessage, Box } from "@kleros/ui-components-library";
-import TransactionOverview from "./TransactionOverview/TransactionOverview";
+import {
+  AlertMessage,
+  Box,
+  CustomTimeline,
+} from "@kleros/ui-components-library";
+import Agreement from "./Agreement/Agreement";
 import { useTransactionDetails } from "hooks/useTransactionDetails";
 import { BaseSkeleton } from "components/Common/Skeleton/BaseSkeleton";
-import TransactionDetailsHeader from "./TransactionDetailsHeader/TransactionDetailsHeader";
+import Header from "./Header/Header";
+import { useMemo } from "react";
+import Summary from "./Summary/Summary";
 
 const StyledSkeleton = styled(BaseSkeleton)`
   height: 100%;
@@ -26,6 +32,15 @@ const StyledHr = styled.hr`
   border: 1px solid ${({ theme }) => theme.colors.primaryBlue};
 `;
 
+const StyledA = styled.a`
+  font-size: 12px;
+  color: ${({ theme }) => theme.colors.secondaryText};
+`;
+
+const StyledTimeline = styled(CustomTimeline)`
+  align-self: center;
+`;
+
 interface Props {
   id: bigint;
   contractAddress: `0x${string}`;
@@ -36,6 +51,20 @@ export default function TransactionDetails({ id, contractAddress }: Props) {
     id: id,
     contractAddress,
   });
+
+  const timelineItems = useMemo(() => {
+    if (!transaction) return [];
+
+    return transaction.timeline.map((event) => ({
+      title: event.title,
+      subtitle: event.subtitle,
+      party: (
+        <StyledA href={event.party} target="_blank" rel="noopener noreferrer">
+          View
+        </StyledA>
+      ),
+    }));
+  }, [transaction]);
 
   if (isFetching) {
     return <StyledSkeleton />;
@@ -53,7 +82,7 @@ export default function TransactionDetails({ id, contractAddress }: Props) {
 
   return (
     <StyledBox>
-      <TransactionDetailsHeader
+      <Header
         status={transaction.status}
         blockExplorerLink={transaction.blockExplorerLink}
         createdAt={transaction.createdAt}
@@ -61,20 +90,24 @@ export default function TransactionDetails({ id, contractAddress }: Props) {
 
       <StyledHr />
 
-      <TransactionOverview
+      <Agreement
         title={transaction.metaEvidence.title}
         description={transaction.metaEvidence.description}
-        originalAmount={transaction.metaEvidence.amount}
-        escrowAmount={transaction.amountInEscrow}
-        ticker={transaction.metaEvidence.token.ticker}
-        sender={transaction.metaEvidence.sender}
-        receiver={transaction.metaEvidence.receiver}
         agreementDocURI={transaction.metaEvidence.fileURI}
       />
 
       <StyledHr />
 
-      <h1>Timeline</h1>
+      <Summary
+        originalAmount={transaction.metaEvidence.amount}
+        escrowAmount={transaction.amountInEscrow}
+        ticker={transaction.metaEvidence.token?.ticker ?? "ETH"}
+        sender={transaction.metaEvidence.sender}
+        receiver={transaction.metaEvidence.receiver}
+      />
+
+      {/* @ts-expect-error ignore for now,timelineItems is the correct type */}
+      <StyledTimeline items={timelineItems} />
     </StyledBox>
   );
 }

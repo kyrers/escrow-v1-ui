@@ -32,7 +32,7 @@ interface Props {
   createdAt: string;
 }
 
-export default function TransactionDetailsHeader({
+export default function Header({
   status,
   blockExplorerLink,
   createdAt,

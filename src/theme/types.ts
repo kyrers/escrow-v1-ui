@@ -40,6 +40,7 @@ export interface KlerosTheme {
   };
   breakpoints: {
     xs: string;
+    sm: string;
     lg: string;
   };
   animations: {

@@ -9,14 +9,17 @@ import { useQuery } from "@tanstack/react-query";
 import { MULTIPLE_ARBITRABLE_TRANSACTION_ABI } from "config/contracts/abi/multipleArbitrableTransaction";
 import { MULTIPLE_ARBITRABLE_TOKEN_TRANSACTION_ABI } from "config/contracts/abi/mutlipleArbitrableTokenTransaction";
 import { getBlock, getLogs } from "viem/actions";
-import { type Client, type GetLogsReturnType } from "viem";
+import { type Client } from "viem";
 import { useMemo } from "react";
 import { ipfsFetch } from "utils/ipfs";
 import type { MetaEvidence } from "model/MetaEvidence";
 import { TransactionStatus, type TransactionMini } from "model/Transaction";
 import { mapTransactionStatus } from "utils/transaction";
 import { QUERY_KEYS } from "config/queryKeys";
-import { metaEvidenceEvent } from "config/contracts/events";
+import {
+  metaEvidenceEvent,
+  type MetaEvidenceLogs,
+} from "config/contracts/events";
 
 //Batch fetch all tx IDs for the connected wallet, from all contracts
 async function fetchTxIDsByContract(
@@ -85,9 +88,6 @@ async function fetchContractMetaEvidenceLogs(
     toBlock: "latest",
   });
 }
-
-//Type of the return from getLogs - an array of logs for the meta evidence event
-type MetaEvidenceLogs = GetLogsReturnType<typeof metaEvidenceEvent>;
 
 //Fetch from IPFS the JSON content for each log in the array
 async function fetchLogsContentFromIPFS(logs: MetaEvidenceLogs) {

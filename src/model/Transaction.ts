@@ -1,4 +1,5 @@
 import type { MetaEvidence } from "./MetaEvidence";
+import type { TimelineEvent } from "./TimelineEvent";
 
 export enum TransactionStatus {
   NoDispute,
@@ -6,6 +7,12 @@ export enum TransactionStatus {
   WaitingReceiver,
   DisputeCreated,
   Resolved,
+}
+
+export enum DisputeRuling {
+  "Jurors refused to arbitrate",
+  "Jurors ruled in favor of the sender",
+  "Jurors ruled in favor of the receiver",
 }
 
 interface BaseTransaction {
@@ -26,5 +33,7 @@ export interface TransactionMini extends BaseTransaction {
 //Used for detailed view
 export interface Transaction extends BaseTransaction {
   amountInEscrow: string;
+  disputeId: bigint;
   blockExplorerLink: string;
+  timeline: TimelineEvent[];
 }

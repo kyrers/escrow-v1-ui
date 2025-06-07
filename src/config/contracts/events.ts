@@ -1,5 +1,39 @@
-import { parseAbiItem } from "viem";
+import { parseAbiItem, type GetLogsReturnType } from "viem";
 
 export const metaEvidenceEvent = parseAbiItem(
   "event MetaEvidence(uint indexed _metaEvidenceID, string _evidence)"
 );
+export type MetaEvidenceLogs = GetLogsReturnType<typeof metaEvidenceEvent>;
+
+export const paymentEvent = parseAbiItem(
+  "event Payment(uint indexed _transactionID, uint _amount, address _party)"
+);
+export type PaymentLogs = GetLogsReturnType<typeof paymentEvent>;
+
+export const hasToPayFeeEvent = parseAbiItem(
+  "event HasToPayFee(uint indexed _transactionID, uint8 _party)"
+);
+export type HasToPayFeeLogs = GetLogsReturnType<typeof hasToPayFeeEvent>;
+
+export const disputeEvent = parseAbiItem(
+  "event Dispute(address indexed _arbitrator, uint indexed _disputeID, uint _metaEvidenceID, uint _evidenceGroupID)"
+);
+export type DisputeLogs = GetLogsReturnType<typeof disputeEvent>;
+
+export const appealDecisionEvent = parseAbiItem(
+  "event AppealDecision(uint indexed _disputeID, address indexed _arbitrable)"
+);
+export type AppealDecisionLogs = GetLogsReturnType<typeof appealDecisionEvent>;
+
+export const rulingEvent = parseAbiItem(
+  "event Ruling(address indexed _arbitrator, uint indexed _disputeID, uint _ruling)"
+);
+export type RulingLogs = GetLogsReturnType<typeof rulingEvent>;
+
+export type ContractEventLogs =
+  | MetaEvidenceLogs
+  | PaymentLogs
+  | HasToPayFeeLogs
+  | DisputeLogs
+  | AppealDecisionLogs
+  | RulingLogs;
