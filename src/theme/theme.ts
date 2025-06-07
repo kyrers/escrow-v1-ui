@@ -43,6 +43,7 @@ export const theme: KlerosTheme = {
   },
   breakpoints: {
     xs: "430px",
+    sm: "593px",
     lg: "var(--breakpoint-lg)",
   },
   animations: {

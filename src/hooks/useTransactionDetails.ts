@@ -1,17 +1,24 @@
 import { useAccount, useClient } from "wagmi";
 import { useQuery } from "@tanstack/react-query";
 import { getBlock, getLogs, readContract } from "viem/actions";
-import { formatUnits, type Client, type GetLogsReturnType } from "viem";
+import { formatUnits, type Client } from "viem";
 import { ipfsFetch } from "utils/ipfs";
 import type { MetaEvidence } from "model/MetaEvidence";
 import { TransactionStatus, type Transaction } from "model/Transaction";
 import { mapTransactionStatus } from "utils/transaction";
 import { QUERY_KEYS } from "config/queryKeys";
 import { addressToAbi, getBlockExplorerLink } from "utils/common";
-import { metaEvidenceEvent } from "config/contracts/events";
-
-//Type of the return from getLogs - an array of logs for the meta evidence event
-type MetaEvidenceLogs = GetLogsReturnType<typeof metaEvidenceEvent>;
+import { formatTimelineEvents } from "utils/transaction";
+import {
+  appealDecisionEvent,
+  disputeEvent,
+  hasToPayFeeEvent,
+  metaEvidenceEvent,
+  paymentEvent,
+  rulingEvent,
+  type ContractEventLogs,
+  type MetaEvidenceLogs,
+} from "config/contracts/events";
 
 async function fetchDetails(
   client: Client,
@@ -26,21 +33,83 @@ async function fetchDetails(
   });
 }
 
-async function fetchMetaEvidenceLog(
+async function fetchArbitrator(client: Client, contractAddress: `0x${string}`) {
+  return await readContract(client, {
+    abi: addressToAbi(contractAddress),
+    address: contractAddress,
+    functionName: "arbitrator" as const,
+  });
+}
+
+async function fetchTimelineEvents(
   client: Client,
   contractAddress: `0x${string}`,
-  id: bigint
+  arbitratorAddress: `0x${string}`,
+  id: bigint,
+  disputeId: bigint
 ) {
-  //NOTE: viem client defaults to mainnet, so if no wallet is connected, it is only possible to get logs for mainnet.
-  const logs = await getLogs(client, {
-    address: contractAddress,
-    event: metaEvidenceEvent,
-    args: { _metaEvidenceID: id },
-    fromBlock: 0n,
-    toBlock: "latest",
-  });
+  const [
+    metaEvidenceLogs,
+    paymentLogs,
+    hasToPayFeeLogs,
+    disputeLogs,
+    appealDecisionLogs,
+    rulingLogs,
+  ] = await Promise.all([
+    await getLogs(client, {
+      address: contractAddress,
+      event: metaEvidenceEvent,
+      args: { _metaEvidenceID: id },
+      fromBlock: 0n,
+      toBlock: "latest",
+    }),
+    await getLogs(client, {
+      address: contractAddress,
+      event: paymentEvent,
+      args: { _transactionID: id },
+      fromBlock: 0n,
+      toBlock: "latest",
+    }),
+    await getLogs(client, {
+      address: contractAddress,
+      event: hasToPayFeeEvent,
+      args: { _transactionID: id },
+      fromBlock: 0n,
+      toBlock: "latest",
+    }),
+    await getLogs(client, {
+      address: contractAddress,
+      event: disputeEvent,
+      args: { _disputeID: disputeId, _arbitrator: arbitratorAddress },
+      fromBlock: 0n,
+      toBlock: "latest",
+    }),
+    await getLogs(client, {
+      address: contractAddress,
+      event: appealDecisionEvent,
+      args: { _disputeID: disputeId, _arbitrable: contractAddress },
+      fromBlock: 0n,
+      toBlock: "latest",
+    }),
+    await getLogs(client, {
+      address: contractAddress,
+      event: rulingEvent,
+      args: { _disputeID: disputeId, _arbitrator: arbitratorAddress },
+      fromBlock: 0n,
+      toBlock: "latest",
+    }),
+  ]);
 
-  return logs[0];
+  const ordered = [
+    ...metaEvidenceLogs,
+    ...paymentLogs,
+    ...hasToPayFeeLogs,
+    ...disputeLogs,
+    ...appealDecisionLogs,
+    ...rulingLogs,
+  ].sort((a, b) => Number(a.blockNumber) - Number(b.blockNumber));
+
+  return ordered;
 }
 
 async function fetchMetaEvidenceContent(log: MetaEvidenceLogs[0]) {
@@ -56,8 +125,13 @@ async function fetchMetaEvidenceContent(log: MetaEvidenceLogs[0]) {
   }
 }
 
-async function fetchBlockTimestamp(client: Client, blockNumber: bigint) {
-  return (await getBlock(client, { blockNumber: blockNumber })).timestamp;
+async function fetchBlockTimestamps(client: Client, blockNumbers: bigint[]) {
+  return await Promise.all(
+    blockNumbers.map(async (blockNumber) => {
+      const block = await getBlock(client, { blockNumber });
+      return block.timestamp;
+    })
+  );
 }
 
 interface Props {
@@ -74,27 +148,46 @@ export function useTransactionDetails({ id, contractAddress }: Props) {
     queryFn: async () => {
       if (!client) return undefined;
 
-      const [details, metaEvidenceLog] = await Promise.all([
+      const [details, arbitratorAddress] = await Promise.all([
         fetchDetails(client, contractAddress, id),
-        fetchMetaEvidenceLog(client, contractAddress, id),
+        fetchArbitrator(client, contractAddress),
       ]);
 
-      const [metaEvidence, blockTimestamp] = await Promise.all([
+      const disputeId = details[details.length - 5];
+
+      const timelineEventsLogs = await fetchTimelineEvents(
+        client,
+        contractAddress,
+        arbitratorAddress,
+        id,
+        disputeId as bigint
+      );
+
+      //MetaEvidence event is emmitted when the transaction is created, and since we need it to download the meta evidence from IPFS,
+      //we can use it for the Transaction Creation timeline event
+      const metaEvidenceLog = timelineEventsLogs[0] as MetaEvidenceLogs[0];
+
+      const [metaEvidence, blockTimestamps] = await Promise.all([
         fetchMetaEvidenceContent(metaEvidenceLog),
-        fetchBlockTimestamp(client, metaEvidenceLog.blockNumber),
+        fetchBlockTimestamps(
+          client,
+          timelineEventsLogs.map((log) => log.blockNumber)
+        ),
       ]);
 
       if (!metaEvidence) return undefined;
 
       const amountInEscrow = formatUnits(
         details[2],
-        (metaEvidence.token.decimals as number) ?? 18
+        (metaEvidence.token?.decimals as number) ?? 18
       );
 
       const formattedTx: Transaction = {
         id: id,
+        disputeId: disputeId as bigint,
         createdAt: new Date(
-          parseInt(blockTimestamp.toString()) * 1000
+          //we can rely on the order of Promise.all, so we can use the first timestamp for the createdAt date
+          parseInt(blockTimestamps[0].toString()) * 1000
         ).toLocaleDateString("en-US", {
           year: "numeric",
           month: "short",
@@ -110,6 +203,15 @@ export function useTransactionDetails({ id, contractAddress }: Props) {
         amountInEscrow: amountInEscrow,
         blockExplorerLink: getBlockExplorerLink(
           metaEvidenceLog.transactionHash,
+          chainId ?? 1
+        ),
+        timeline: formatTimelineEvents(
+          timelineEventsLogs as ContractEventLogs,
+          blockTimestamps,
+          metaEvidence.receiver,
+          metaEvidence.sender,
+          metaEvidence.token?.ticker ?? "ETH",
+          (metaEvidence.token?.decimals as number) ?? 18,
           chainId ?? 1
         ),
       };

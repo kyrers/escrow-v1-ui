@@ -35,7 +35,7 @@ export interface MetaEvidence {
   sender: string;
   subCategory: string;
   timeout: number;
-  token: Token;
+  token?: Token;
   title: string;
   fileURI?: string;
 }
