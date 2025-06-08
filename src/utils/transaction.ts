@@ -5,11 +5,14 @@ import {
   rulingEvent,
   disputeEvent,
   appealDecisionEvent,
+  evidenceEvent,
   type ContractEventLogs,
+  type EvidenceLogs,
 } from "config/contracts/events";
 import { formatUnits } from "viem";
 import { addressToShortString, getBlockExplorerLink } from "./common";
 import { DisputeRuling } from "model/Transaction";
+import type { Evidence } from "model/Evidence";
 
 export const mapTransactionStatus = (
   backendStatus: string,
@@ -33,6 +36,8 @@ export const mapTransactionStatus = (
 
 export function formatTimelineEvents(
   timelineEvents: ContractEventLogs,
+  evidenceLogs: EvidenceLogs,
+  evidenceContent: Evidence[],
   blockTimestamps: bigint[],
   receiver: string,
   sender: string,
@@ -45,14 +50,14 @@ export function formatTimelineEvents(
       case metaEvidenceEvent.name:
         return {
           title: "Escrow created",
-          subtitle: new Date(
+          date: new Date(
             parseInt(blockTimestamps[index].toString()) * 1000
           ).toLocaleDateString("en-US", {
             year: "numeric",
             month: "short",
             day: "numeric",
           }),
-          party: getBlockExplorerLink(event.transactionHash, chainId),
+          txURL: getBlockExplorerLink(event.transactionHash, chainId),
         };
       case paymentEvent.name:
         return {
@@ -62,14 +67,14 @@ export function formatTimelineEvents(
           )} ${ticker} paid by ${addressToShortString(
             event.args._party as string
           )}`,
-          subtitle: new Date(
+          date: new Date(
             parseInt(blockTimestamps[index].toString()) * 1000
           ).toLocaleDateString("en-US", {
             year: "numeric",
             month: "short",
             day: "numeric",
           }),
-          party: getBlockExplorerLink(event.transactionHash, chainId),
+          txURL: getBlockExplorerLink(event.transactionHash, chainId),
         };
       case hasToPayFeeEvent.name:
         return {
@@ -78,50 +83,71 @@ export function formatTimelineEvents(
               ? addressToShortString(sender)
               : addressToShortString(receiver)
           } has to pay fee`,
-          subtitle: new Date(
+          date: new Date(
             parseInt(blockTimestamps[index].toString()) * 1000
           ).toLocaleDateString("en-US", {
             year: "numeric",
             month: "short",
             day: "numeric",
           }),
-          party: getBlockExplorerLink(event.transactionHash, chainId),
+          txURL: getBlockExplorerLink(event.transactionHash, chainId),
         };
       case disputeEvent.name:
         return {
           title: `Dispute created`,
-          subtitle: new Date(
+          date: new Date(
             parseInt(blockTimestamps[index].toString()) * 1000
           ).toLocaleDateString("en-US", {
             year: "numeric",
             month: "short",
             day: "numeric",
           }),
-          party: getBlockExplorerLink(event.transactionHash, chainId),
+          txURL: getBlockExplorerLink(event.transactionHash, chainId),
         };
       case appealDecisionEvent.name:
         return {
           title: "Appealed",
-          subtitle: new Date(
+          date: new Date(
             parseInt(blockTimestamps[index].toString()) * 1000
           ).toLocaleDateString("en-US", {
             year: "numeric",
             month: "short",
             day: "numeric",
           }),
-          party: getBlockExplorerLink(event.transactionHash, chainId),
+          txURL: getBlockExplorerLink(event.transactionHash, chainId),
         };
+      case evidenceEvent.name: {
+        const evidenceIndex = evidenceLogs.findIndex(
+          (log) => log.transactionHash === event.transactionHash
+        );
+        const evidence = evidenceContent[evidenceIndex];
+
+        return {
+          title: `${addressToShortString(
+            event.args._party as string
+          )} submitted ${evidence.name} as evidence`,
+          date: new Date(
+            parseInt(blockTimestamps[index].toString()) * 1000
+          ).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+          }),
+          txURL: getBlockExplorerLink(event.transactionHash, chainId),
+          evidenceURI: evidence.fileURI,
+        };
+      }
       case rulingEvent.name:
         return {
           title: `${DisputeRuling[Number(event.args._ruling)]}`,
-          subtitle: new Date(
+          date: new Date(
             parseInt(blockTimestamps[index].toString()) * 1000
           ).toLocaleDateString("en-US", {
             year: "numeric",
             month: "short",
             day: "numeric",
           }),
-          party: getBlockExplorerLink(event.transactionHash, chainId),
+          txURL: getBlockExplorerLink(event.transactionHash, chainId),
         };
     }
   });

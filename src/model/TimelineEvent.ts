@@ -1,5 +1,6 @@
 export interface TimelineEvent {
   title: string;
-  subtitle: string;
-  party: string;
+  date: string;
+  txURL: string;
+  evidenceURI?: string;
 }
