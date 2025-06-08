@@ -25,6 +25,11 @@ export const appealDecisionEvent = parseAbiItem(
 );
 export type AppealDecisionLogs = GetLogsReturnType<typeof appealDecisionEvent>;
 
+export const evidenceEvent = parseAbiItem(
+  "event Evidence(address indexed _arbitrator, uint indexed _evidenceGroupID, address indexed _party, string _evidence)"
+);
+export type EvidenceLogs = GetLogsReturnType<typeof evidenceEvent>;
+
 export const rulingEvent = parseAbiItem(
   "event Ruling(address indexed _arbitrator, uint indexed _disputeID, uint _ruling)"
 );
@@ -36,4 +41,5 @@ export type ContractEventLogs =
   | HasToPayFeeLogs
   | DisputeLogs
   | AppealDecisionLogs
+  | EvidenceLogs
   | RulingLogs;

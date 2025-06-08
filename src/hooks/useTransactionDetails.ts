@@ -12,13 +12,16 @@ import { formatTimelineEvents } from "utils/transaction";
 import {
   appealDecisionEvent,
   disputeEvent,
+  evidenceEvent,
   hasToPayFeeEvent,
   metaEvidenceEvent,
   paymentEvent,
   rulingEvent,
   type ContractEventLogs,
+  type EvidenceLogs,
   type MetaEvidenceLogs,
 } from "config/contracts/events";
+import type { Evidence } from "model/Evidence";
 
 async function fetchDetails(
   client: Client,
@@ -54,6 +57,7 @@ async function fetchTimelineEvents(
     hasToPayFeeLogs,
     disputeLogs,
     appealDecisionLogs,
+    evidenceLogs,
     rulingLogs,
   ] = await Promise.all([
     await getLogs(client, {
@@ -93,6 +97,16 @@ async function fetchTimelineEvents(
     }),
     await getLogs(client, {
       address: contractAddress,
+      event: evidenceEvent,
+      args: {
+        _arbitrator: arbitratorAddress,
+        _evidenceGroupID: id,
+      },
+      fromBlock: 0n,
+      toBlock: "latest",
+    }),
+    await getLogs(client, {
+      address: contractAddress,
       event: rulingEvent,
       args: { _disputeID: disputeId, _arbitrator: arbitratorAddress },
       fromBlock: 0n,
@@ -106,6 +120,7 @@ async function fetchTimelineEvents(
     ...hasToPayFeeLogs,
     ...disputeLogs,
     ...appealDecisionLogs,
+    ...evidenceLogs,
     ...rulingLogs,
   ].sort((a, b) => Number(a.blockNumber) - Number(b.blockNumber));
 
@@ -123,6 +138,31 @@ async function fetchMetaEvidenceContent(log: MetaEvidenceLogs[0]) {
     );
     return null;
   }
+}
+
+async function fetchEvidenceContent(logs: EvidenceLogs) {
+  return await Promise.all(
+    logs.map(async (log) => {
+      try {
+        if (!log.args._evidence) return null;
+        const content = (await ipfsFetch(log.args._evidence)) as Evidence;
+
+        //Old UI allowed evidence to be text (e.g. links). This will no longer be the case, only PDFs.
+        //However, to still display evidence such as this that was uploaded in the old UI, we can check if we downloaded an actual file by checking the fileURI.
+        //If we didn't, just use the log URI, and the user will have access to the text evidence uploaded, in JSON format.
+        if (!content.fileURI) {
+          content.fileURI = log.args._evidence;
+        }
+
+        return content;
+      } catch (error) {
+        console.error(
+          `Failed to fetch IPFS content for evidence ${log.args._evidence}: ${error}`
+        );
+        return null;
+      }
+    })
+  );
 }
 
 async function fetchBlockTimestamps(client: Client, blockNumbers: bigint[]) {
@@ -166,20 +206,37 @@ export function useTransactionDetails({ id, contractAddress }: Props) {
       //MetaEvidence event is emmitted when the transaction is created, and since we need it to download the meta evidence from IPFS,
       //we can use it for the Transaction Creation timeline event
       const metaEvidenceLog = timelineEventsLogs[0] as MetaEvidenceLogs[0];
+      const evidenceLogs = timelineEventsLogs.filter(
+        (log) => log.eventName === evidenceEvent.name
+      );
 
-      const [metaEvidence, blockTimestamps] = await Promise.all([
-        fetchMetaEvidenceContent(metaEvidenceLog),
-        fetchBlockTimestamps(
-          client,
-          timelineEventsLogs.map((log) => log.blockNumber)
-        ),
-      ]);
+      const [metaEvidence, evidenceContent, blockTimestamps] =
+        await Promise.all([
+          fetchMetaEvidenceContent(metaEvidenceLog),
+          fetchEvidenceContent(evidenceLogs),
+          fetchBlockTimestamps(
+            client,
+            timelineEventsLogs.map((log) => log.blockNumber)
+          ),
+        ]);
 
       if (!metaEvidence) return undefined;
 
       const amountInEscrow = formatUnits(
         details[2],
         (metaEvidence.token?.decimals as number) ?? 18
+      );
+
+      const timelineEvents = formatTimelineEvents(
+        timelineEventsLogs as ContractEventLogs,
+        evidenceLogs,
+        evidenceContent as Evidence[],
+        blockTimestamps,
+        metaEvidence.receiver,
+        metaEvidence.sender,
+        metaEvidence.token?.ticker ?? "ETH",
+        (metaEvidence.token?.decimals as number) ?? 18,
+        chainId ?? 1
       );
 
       const formattedTx: Transaction = {
@@ -205,15 +262,7 @@ export function useTransactionDetails({ id, contractAddress }: Props) {
           metaEvidenceLog.transactionHash,
           chainId ?? 1
         ),
-        timeline: formatTimelineEvents(
-          timelineEventsLogs as ContractEventLogs,
-          blockTimestamps,
-          metaEvidence.receiver,
-          metaEvidence.sender,
-          metaEvidence.token?.ticker ?? "ETH",
-          (metaEvidence.token?.decimals as number) ?? 18,
-          chainId ?? 1
-        ),
+        timeline: timelineEvents,
       };
 
       return formattedTx;

@@ -10,6 +10,7 @@ import { BaseSkeleton } from "components/Common/Skeleton/BaseSkeleton";
 import Header from "./Header/Header";
 import { useMemo } from "react";
 import Summary from "./Summary/Summary";
+import { getIpfsUrl } from "utils/ipfs";
 
 const StyledSkeleton = styled(BaseSkeleton)`
   height: 100%;
@@ -35,10 +36,24 @@ const StyledHr = styled.hr`
 const StyledA = styled.a`
   font-size: 12px;
   color: ${({ theme }) => theme.colors.secondaryText};
+
+  &:hover {
+    text-decoration: underline;
+  }
 `;
 
 const StyledTimeline = styled(CustomTimeline)`
   align-self: center;
+`;
+
+const TimelinePartyContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+`;
+
+const StyledSpan = styled.span`
+  color: ${({ theme }) => theme.colors.secondaryText};
 `;
 
 interface Props {
@@ -57,11 +72,25 @@ export default function TransactionDetails({ id, contractAddress }: Props) {
 
     return transaction.timeline.map((event) => ({
       title: event.title,
-      subtitle: event.subtitle,
+      subtitle: event.date,
       party: (
-        <StyledA href={event.party} target="_blank" rel="noopener noreferrer">
-          View
-        </StyledA>
+        <TimelinePartyContainer>
+          <StyledA href={event.txURL} target="_blank" rel="noopener noreferrer">
+            View transaction
+          </StyledA>
+          {event.evidenceURI && (
+            <>
+              <StyledSpan>|</StyledSpan>
+              <StyledA
+                href={getIpfsUrl(event.evidenceURI)}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                View evidence
+              </StyledA>
+            </>
+          )}
+        </TimelinePartyContainer>
       ),
     }));
   }, [transaction]);
