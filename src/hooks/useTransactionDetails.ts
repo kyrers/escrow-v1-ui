@@ -1,13 +1,17 @@
 import { useAccount, useClient } from "wagmi";
 import { useQuery } from "@tanstack/react-query";
-import { getBlock, getLogs, readContract } from "viem/actions";
+import { getLogs, readContract } from "viem/actions";
 import { formatUnits, type Client } from "viem";
 import { ipfsFetch } from "utils/ipfs";
 import type { MetaEvidence } from "model/MetaEvidence";
 import { TransactionStatus, type Transaction } from "model/Transaction";
 import { mapTransactionStatus } from "utils/transaction";
 import { QUERY_KEYS } from "config/queryKeys";
-import { addressToAbi, getBlockExplorerLink } from "utils/common";
+import {
+  addressToAbi,
+  fetchBlockTimestamps,
+  getBlockExplorerLink,
+} from "utils/common";
 import { formatTimelineEvents } from "utils/transaction";
 import {
   appealDecisionEvent,
@@ -161,15 +165,6 @@ async function fetchEvidenceContent(logs: EvidenceLogs) {
         );
         return null;
       }
-    })
-  );
-}
-
-async function fetchBlockTimestamps(client: Client, blockNumbers: bigint[]) {
-  return await Promise.all(
-    blockNumbers.map(async (blockNumber) => {
-      const block = await getBlock(client, { blockNumber });
-      return block.timestamp;
     })
   );
 }

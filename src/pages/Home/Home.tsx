@@ -22,7 +22,7 @@ export default function Home() {
         <AlertMessage
           className="w-fit"
           title="Connect your wallet"
-          msg="Please connect your wallet to create and view your transactions"
+          msg="Please connect your wallet to create and view your transactions."
           variant="info"
         />
       ) : (

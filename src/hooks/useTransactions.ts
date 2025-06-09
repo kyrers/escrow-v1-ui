@@ -8,7 +8,8 @@ import { multicall } from "wagmi/actions";
 import { useQuery } from "@tanstack/react-query";
 import { MULTIPLE_ARBITRABLE_TRANSACTION_ABI } from "config/contracts/abi/multipleArbitrableTransaction";
 import { MULTIPLE_ARBITRABLE_TOKEN_TRANSACTION_ABI } from "config/contracts/abi/mutlipleArbitrableTokenTransaction";
-import { getBlock, getLogs } from "viem/actions";
+import { getLogs } from "viem/actions";
+import { fetchBlockTimestamps } from "utils/common";
 import { type Client } from "viem";
 import { useMemo } from "react";
 import { ipfsFetch } from "utils/ipfs";
@@ -103,16 +104,6 @@ async function fetchLogsContentFromIPFS(logs: MetaEvidenceLogs) {
         );
         return null;
       }
-    })
-  );
-}
-
-//Fetch the timestamps for the block numbers, so we can display the transaction date
-async function fetchBlockTimestamps(client: Client, blockNumbers: bigint[]) {
-  return await Promise.all(
-    blockNumbers.map(async (blockNumber) => {
-      const block = await getBlock(client, { blockNumber });
-      return block.timestamp;
     })
   );
 }
