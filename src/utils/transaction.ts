@@ -125,7 +125,7 @@ export function formatTimelineEvents(
         return {
           title: `${addressToShortString(
             event.args._party as string
-          )} submitted ${evidence.name} as evidence`,
+          )} submitted "${evidence.name}" as evidence`,
           date: new Date(
             parseInt(blockTimestamps[index].toString()) * 1000
           ).toLocaleDateString("en-US", {
