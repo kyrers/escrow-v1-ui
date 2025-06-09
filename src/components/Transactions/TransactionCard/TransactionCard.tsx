@@ -83,7 +83,9 @@ export default function TransactionCard({ transaction }: Props) {
           />
           <AmountTag
             active
-            text={`${transaction.userPartyLabel}: ${transaction.metaEvidence.amount} ${transaction.metaEvidence.token.ticker}`}
+            text={`${transaction.userPartyLabel}: ${
+              transaction.metaEvidence.amount
+            } ${transaction.metaEvidence.token?.ticker ?? "ETH"}`}
           />
         </CardEdge>
         <CardBody>

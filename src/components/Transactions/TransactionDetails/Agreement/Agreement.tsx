@@ -8,6 +8,11 @@ const Title = styled.h1`
   word-break: break-all;
 `;
 
+const Description = styled.p`
+  word-break: break-all;
+  white-space: pre-wrap;
+`;
+
 const StyledA = styled.a`
   display: flex;
   align-items: center;
@@ -17,11 +22,6 @@ const StyledA = styled.a`
     font-size: 14px;
     color: ${({ theme }) => theme.colors.primaryBlue};
   }
-`;
-
-const Description = styled.p`
-  word-break: break-all;
-  white-space: pre-wrap;
 `;
 
 interface Props {
