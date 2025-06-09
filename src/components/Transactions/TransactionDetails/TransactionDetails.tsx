@@ -42,6 +42,7 @@ const StyledA = styled.a`
   }
 `;
 
+type TimelineItems = React.ComponentProps<typeof CustomTimeline>["items"];
 const StyledTimeline = styled(CustomTimeline)`
   align-self: center;
 `;
@@ -67,10 +68,19 @@ export default function TransactionDetails({ id, contractAddress }: Props) {
     contractAddress,
   });
 
-  const timelineItems = useMemo(() => {
-    if (!transaction) return [];
+  //This can be simplified if the CustomTimeline component is updated and no longer expects a tuple
+  const timelineItems = useMemo<TimelineItems>(() => {
+    if (!transaction) {
+      return [
+        {
+          title: "No timeline available",
+          subtitle: "",
+          party: "",
+        },
+      ];
+    }
 
-    return transaction.timeline.map((event) => ({
+    const items = transaction.timeline.map((event) => ({
       title: event.title,
       subtitle: event.date,
       party: (
@@ -78,6 +88,7 @@ export default function TransactionDetails({ id, contractAddress }: Props) {
           <StyledA href={event.txURL} target="_blank" rel="noopener noreferrer">
             View transaction
           </StyledA>
+
           {event.evidenceURI && (
             <>
               <StyledSpan>|</StyledSpan>
@@ -93,6 +104,8 @@ export default function TransactionDetails({ id, contractAddress }: Props) {
         </TimelinePartyContainer>
       ),
     }));
+
+    return [...items] as TimelineItems;
   }, [transaction]);
 
   if (isFetching) {
@@ -135,7 +148,6 @@ export default function TransactionDetails({ id, contractAddress }: Props) {
         receiver={transaction.metaEvidence.receiver}
       />
 
-      {/* @ts-expect-error ignore for now,timelineItems is the correct type */}
       <StyledTimeline items={timelineItems} />
     </StyledBox>
   );
