@@ -26,6 +26,7 @@ import {
   type MetaEvidenceLogs,
 } from "config/contracts/events";
 import type { Evidence } from "model/Evidence";
+import type { TimelineEvent } from "model/TimelineEvent";
 
 async function fetchDetails(
   client: Client,
@@ -169,6 +170,38 @@ async function fetchEvidenceContent(logs: EvidenceLogs) {
   );
 }
 
+function mapToTransaction(
+  id: bigint,
+  disputeId: bigint,
+  blockTimestamp: bigint,
+  contractAddress: `0x${string}`,
+  metaEvidence: MetaEvidence,
+  status: number,
+  lastInteraction: number,
+  amountInEscrow: string,
+  blockExplorerLink: string,
+  timelineEvents: TimelineEvent[]
+): Transaction {
+  return {
+    id: id,
+    disputeId: disputeId,
+    createdAt: new Date(
+      parseInt(blockTimestamp.toString()) * 1000
+    ).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    }),
+    arbitrableAddress: contractAddress,
+    metaEvidence: metaEvidence,
+    status: mapTransactionStatus(TransactionStatus[status], amountInEscrow),
+    lastInteraction: Number(lastInteraction),
+    amountInEscrow: amountInEscrow,
+    blockExplorerLink: blockExplorerLink,
+    timeline: timelineEvents,
+  };
+}
+
 interface Props {
   id: bigint;
   contractAddress: `0x${string}`;
@@ -222,6 +255,11 @@ export function useTransactionDetails({ id, contractAddress }: Props) {
         (metaEvidence.token?.decimals as number) ?? 18
       );
 
+      const blockExplorerLink = getBlockExplorerLink(
+        metaEvidenceLog.transactionHash,
+        chainId ?? 1
+      );
+
       const timelineEvents = formatTimelineEvents(
         timelineEventsLogs as ContractEventLogs,
         evidenceLogs,
@@ -234,33 +272,18 @@ export function useTransactionDetails({ id, contractAddress }: Props) {
         chainId ?? 1
       );
 
-      const formattedTx: Transaction = {
-        id: id,
-        disputeId: disputeId as bigint,
-        createdAt: new Date(
-          //we can rely on the order of Promise.all, so we can use the first timestamp for the createdAt date
-          parseInt(blockTimestamps[0].toString()) * 1000
-        ).toLocaleDateString("en-US", {
-          year: "numeric",
-          month: "short",
-          day: "numeric",
-        }),
-        arbitrableAddress: contractAddress,
-        metaEvidence: metaEvidence,
-        status: mapTransactionStatus(
-          TransactionStatus[details[details.length - 1] as number],
-          amountInEscrow
-        ),
-        lastInteraction: Number(details[details.length - 2]),
-        amountInEscrow: amountInEscrow,
-        blockExplorerLink: getBlockExplorerLink(
-          metaEvidenceLog.transactionHash,
-          chainId ?? 1
-        ),
-        timeline: timelineEvents,
-      };
-
-      return formattedTx;
+      return mapToTransaction(
+        id,
+        disputeId as bigint,
+        blockTimestamps[0], //we can rely on the order of Promise.all, so we can use the first timestamp for the createdAt date
+        contractAddress,
+        metaEvidence,
+        details[details.length - 1] as number, // status
+        details[details.length - 2] as number, //last interaction
+        amountInEscrow,
+        blockExplorerLink,
+        timelineEvents
+      );
     },
     enabled: typeof id === "bigint" && !!contractAddress,
     refetchOnWindowFocus: false,
