@@ -108,6 +108,35 @@ async function fetchLogsContentFromIPFS(logs: MetaEvidenceLogs) {
   );
 }
 
+function mapToTransactionMini(
+  txID: bigint,
+  blockTimestamp: bigint,
+  contractAddress: `0x${string}`,
+  metaEvidence: MetaEvidence,
+  userParty: string,
+  status: number,
+  txAmountInEscrow: string,
+  lastInteraction: number
+): TransactionMini {
+  return {
+    id: txID,
+    createdAt: new Date(
+      parseInt(blockTimestamp.toString()) * 1000
+    ).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    }),
+    arbitrableAddress: contractAddress,
+    metaEvidence: metaEvidence,
+    userPartyLabel: userParty,
+    otherPartyAddress:
+      userParty === "sender" ? metaEvidence.receiver : metaEvidence.sender,
+    status: mapTransactionStatus(TransactionStatus[status], txAmountInEscrow),
+    lastInteraction: Number(lastInteraction),
+  };
+}
+
 export function useTransactions() {
   const { address, chain } = useAccount();
   const client = useClient();
@@ -179,38 +208,17 @@ export function useTransactions() {
               //Shouldn't happen, but if we did not get the details or the meta evidence, skip for now
               if (tx.status !== "success" || !metaEvidence) return null;
 
-              //Get the corresponding txID - we can rely on the order of multicall
-              const txID = txIDs[index];
-
-              const txAmountInEscrow = tx.result[2].toString(); //amount in escrow
-              const status = tx.result[tx.result.length - 1] as number; //status
-              const userParty = metaEvidence?.aliases[address];
-
-              //Create a TransactionMini object with the information we need
-              const formattedTx: TransactionMini = {
-                id: txID,
-                createdAt: new Date(
-                  parseInt(blockTimestamps[index].toString()) * 1000
-                ).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "short",
-                  day: "numeric",
-                }),
-                arbitrableAddress: contractAddress,
-                metaEvidence: metaEvidence,
-                userPartyLabel: userParty,
-                otherPartyAddress:
-                  userParty === "sender"
-                    ? metaEvidence.receiver
-                    : metaEvidence.sender,
-                status: mapTransactionStatus(
-                  TransactionStatus[status],
-                  txAmountInEscrow
-                ),
-                lastInteraction: Number(tx.result[tx.result.length - 2]),
-              };
-
-              return formattedTx;
+              //Note we can rely on the order of batch fetches
+              return mapToTransactionMini(
+                txIDs[index],
+                blockTimestamps[index],
+                contractAddress,
+                metaEvidence,
+                metaEvidence?.aliases[address],
+                tx.result[tx.result.length - 1] as number, //status
+                tx.result[2].toString(), //amount in escrow
+                tx.result[tx.result.length - 2] as number //last interaction
+              );
             })
             .filter((tx) => tx !== null); //remove nulls as we don't have the needed information to display
 
