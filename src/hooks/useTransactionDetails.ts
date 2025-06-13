@@ -207,6 +207,13 @@ interface Props {
   contractAddress: `0x${string}`;
 }
 
+/**
+ * NOTE: This hook intentionally does not use wagmi generated hooks because:
+ * 1. It would require determining which generated hooks to use based on the contract address.
+ * 2. It batches information fetching for better performance.
+ * 3. It needs to fetch and process multiple types of data (transaction details, event logs, IPFS content).
+ * Using generated hooks would make the code more complex and not as performant.
+ */
 export function useTransactionDetails({ id, contractAddress }: Props) {
   const client = useClient();
   const { chainId } = useAccount();
