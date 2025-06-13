@@ -36,8 +36,11 @@ export interface KlerosTheme {
   };
   radius: {
     base: string;
+    boxDefault: string;
   };
   breakpoints: {
+    xs: string;
+    sm: string;
     lg: string;
   };
   animations: {
