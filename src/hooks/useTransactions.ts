@@ -137,6 +137,13 @@ function mapToTransactionMini(
   };
 }
 
+/**
+ * NOTE: This hook intentionally does not use wagmi generated hooks because:
+ * 1. It needs to handle 4 different contracts, with 2 different ABIs.
+ * 2. It batches information fetching using multicall for better performance.
+ * 3. It needs to fetch and process multiple types of data (transactions, logs, IPFS content).
+ * Using generated hooks would make the code more complex and not as performant.
+ */
 export function useTransactions() {
   const { address, chain } = useAccount();
   const client = useClient();
@@ -189,9 +196,8 @@ export function useTransactions() {
           );
 
           //Batch fetch from IPFS the JSON content for each log
-          const metaEvidenceContent = await fetchLogsContentFromIPFS(
-            metaEvidenceLogs
-          );
+          const metaEvidenceContent =
+            await fetchLogsContentFromIPFS(metaEvidenceLogs);
 
           //Batch fetch the timestamps for the block numbers
           const blockTimestamps = await fetchBlockTimestamps(
