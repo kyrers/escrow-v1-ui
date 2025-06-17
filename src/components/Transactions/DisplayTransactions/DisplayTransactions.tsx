@@ -51,6 +51,7 @@ export default function DisplayTransactions() {
   return (
     <Container>
       <StyledSearchbar
+        aria-label="Search by title or address"
         placeholder="Search by title or address"
         value={search}
         onChange={(value) => setSearch(value)}
