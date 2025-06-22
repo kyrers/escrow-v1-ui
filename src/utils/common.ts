@@ -42,3 +42,8 @@ export async function fetchBlockTimestamps(
     })
   );
 }
+
+const ethAddressPattern = /^0x[a-fA-F0-9]{40}$/;
+export const validateAddress = (input: string) => {
+  return ethAddressPattern.test(input);
+};
