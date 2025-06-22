@@ -1,9 +1,9 @@
-import { AlertMessage } from "@kleros/ui-components-library";
 import { useAccount } from "wagmi";
-import DisplayTransactions from "components/Transactions/DisplayTransactions/DisplayTransactions";
+import { AlertMessage } from "@kleros/ui-components-library";
 import { DefaultPageContainer } from "components/Common/Containers/DefaultPageContainer";
+import CreateTransactionWizard from "components/CreateTransactionWizard/CreateTransactionWizard";
 
-export default function Home() {
+export default function New() {
   const { isConnected } = useAccount();
 
   return (
@@ -12,11 +12,11 @@ export default function Home() {
         <AlertMessage
           className="w-fit"
           title="Connect your wallet"
-          msg="Please connect your wallet to create and view your transactions."
+          msg="Please connect your wallet to create transactions."
           variant="info"
         />
       ) : (
-        <DisplayTransactions />
+        <CreateTransactionWizard />
       )}
     </DefaultPageContainer>
   );
