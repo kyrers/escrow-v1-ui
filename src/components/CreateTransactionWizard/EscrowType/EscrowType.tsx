@@ -11,9 +11,15 @@ const StyledBox = styled(Box)`
   gap: 16px;
   padding: 8px;
   width: fit-content;
-  max-width: 80%;
+  max-width: 50%;
+  min-width: 500px;
   height: auto;
   overflow: hidden;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
+    max-width: 80%;
+    min-width: unset;
+  }
 `;
 
 const CardContainer = styled.div`
@@ -28,7 +34,8 @@ const CardContainer = styled.div`
 const StyledCard = styled(Card)<{ active: boolean }>`
   display: flex;
   flex-direction: column;
-  height: 120px;
+  height: 150px;
+  width: 150px;
   gap: 4px;
   padding: 4px;
   justify-content: space-around;
@@ -75,7 +82,7 @@ export default function EscrowType({ templates, next }: Props) {
             round
             hover
           >
-            <img src={template.image} alt={template.title} width="40%" />
+            <img src={template.image} alt={template.title} width="60%" />
             <h2>{template.title}</h2>
           </StyledCard>
         ))}

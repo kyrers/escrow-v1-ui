@@ -36,15 +36,28 @@ const ESCROW_TEMPLATES = [
 ];
 
 const Container = styled.div`
+  position: relative;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 16px;
+  justify-content: center;
   width: 100%;
+  height: 100%;
+
+  @media (max-height: ${({ theme }) => theme.breakpoints.md}) {
+    height: unset;
+  }
 `;
 
 const StyledSteps = styled(Steps)`
-  width: 80%;
+  position: absolute;
+  left: 4%;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 200px;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.lg}) {
+    display: none;
+  }
 `;
 
 export default function CreateTransactionWizard() {
@@ -60,7 +73,7 @@ export default function CreateTransactionWizard() {
 
   return (
     <Container>
-      <StyledSteps items={STEPS} currentItemIndex={currentStep} horizontal />
+      <StyledSteps items={STEPS} currentItemIndex={currentStep} />
 
       {currentStep === 0 && (
         <EscrowType templates={ESCROW_TEMPLATES} next={next} />

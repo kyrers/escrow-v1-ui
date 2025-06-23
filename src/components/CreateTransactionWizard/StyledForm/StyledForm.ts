@@ -12,7 +12,7 @@ export const StyledForm = styled(Form)`
 
 export const ButtonContainer = styled.div`
   display: flex;
-  gap: 8px;
+  gap: 16px;
 `;
 
 export const mobileResponsive = css`
