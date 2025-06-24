@@ -66,6 +66,10 @@ export default function Terms({ next, back }: Props) {
         placeholder="Specify the agreement"
         isRequired
         resizeY
+        validate={(value) =>
+          value.length > 0 ? true : "Description is required"
+        }
+        showFieldError
       />
 
       <DeadlineContainer>
