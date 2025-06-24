@@ -4,6 +4,7 @@ import {
   NumberField,
   TextField,
 } from "@kleros/ui-components-library";
+import { useNewTransactionContext } from "context/newTransaction/useNewTransactionContext";
 import { ETH_TOKEN } from "config/tokens";
 import { useERC20Tokens } from "hooks/useERC20Tokens";
 import { useMemo } from "react";
@@ -54,15 +55,32 @@ interface Props {
 }
 
 export default function Details({ next, back }: Props) {
+  const {
+    title,
+    setTitle,
+    receiverAddress,
+    setReceiverAddress,
+    amount,
+    setAmount,
+    token,
+    setToken,
+  } = useNewTransactionContext();
   const { data: erc20Tokens } = useERC20Tokens();
 
   const tokens = useMemo(() => {
     return [ETH_TOKEN, ...erc20Tokens];
   }, [erc20Tokens]);
 
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    next();
+  };
+
   return (
-    <StyledForm onSubmit={next}>
+    <StyledForm onSubmit={handleSubmit}>
       <StyledTextField
+        value={title}
+        onChange={(value) => setTitle(value)}
         isRequired
         label="Title"
         name="title"
@@ -73,6 +91,8 @@ export default function Details({ next, back }: Props) {
       />
 
       <StyledTextField
+        value={receiverAddress}
+        onChange={(value) => setReceiverAddress(value)}
         isRequired
         label="Receiver"
         name="receiver"
@@ -88,6 +108,8 @@ export default function Details({ next, back }: Props) {
 
       <AmountAndTokenContainer>
         <StyledNumberField
+          value={amount}
+          onChange={(value) => setAmount(value)}
           isRequired
           label="Amount"
           name="amount"
@@ -99,7 +121,10 @@ export default function Details({ next, back }: Props) {
         />
 
         <StyledDropdownSelect
-          callback={() => {}}
+          selectedKey={
+            tokens.find((item) => item.name === token)?.name ?? tokens[0].name
+          }
+          callback={(value) => setToken(value.id as string)}
           label="Token"
           name="token"
           isRequired

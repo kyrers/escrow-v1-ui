@@ -1,6 +1,8 @@
+export type EscrowType = "Cryptocurrency Transaction" | "General Service";
+
 export interface EscrowTemplate {
   id: number;
-  title: string;
+  title: EscrowType;
   description: string;
   court: string;
   image: string;
