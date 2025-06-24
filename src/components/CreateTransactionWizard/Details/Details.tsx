@@ -68,6 +68,8 @@ export default function Details({ next, back }: Props) {
         name="title"
         placeholder="Title of the escrow transaction"
         type="text"
+        validate={(value) => (value.length > 0 ? true : "Title is required")}
+        showFieldError
       />
 
       <StyledTextField
@@ -76,12 +78,12 @@ export default function Details({ next, back }: Props) {
         name="receiver"
         placeholder="ETH address of the funds receiver"
         type="text"
-        validationBehavior="native"
+        maxLength={42}
+        autoComplete="off"
         validate={(value) =>
           validateAddress(value) ? true : "Invalid ETH address"
         }
-        maxLength={42}
-        autoComplete="off"
+        showFieldError
       />
 
       <AmountAndTokenContainer>
@@ -90,10 +92,10 @@ export default function Details({ next, back }: Props) {
           label="Amount"
           name="amount"
           placeholder="Amount"
-          validationBehavior="native"
           validate={(value) =>
             value > 0 ? true : "Amount must be greater than 0"
           }
+          showFieldError
         />
 
         <StyledDropdownSelect
