@@ -1,8 +1,32 @@
 import styled from "styled-components";
 import { Box, Button, Card } from "@kleros/ui-components-library";
 import EscrowTypeImage from "assets/escrow-type.png";
+import CryptoTransactionImage from "assets/crypto-transaction.png";
+import GeneralServiceImage from "assets/general-service.png";
 import type { EscrowTemplate } from "model/EscrowTemplate";
 import { useState } from "react";
+import { useNewTransactionContext } from "context/newTransaction/useNewTransactionContext";
+
+const ESCROW_TEMPLATES: EscrowTemplate[] = [
+  {
+    id: 0,
+    title: "Cryptocurrency Transaction",
+    description:
+      "Escrow funds to facilitate a crypto transaction.\n" +
+      "This is a good option for a safe cross chain swap or OTC trades.",
+    court: "Blockchain Non Technical Court",
+    image: CryptoTransactionImage,
+  },
+  {
+    id: 1,
+    title: "General Service",
+    description:
+      "Hiring an outside contractor? Use the general escrow to safeguard these transactions.\n" +
+      "Use this option to define your own terms for any agreement, from freelancing to P2P commerce.",
+    court: "General Court",
+    image: GeneralServiceImage,
+  },
+];
 
 const StyledBox = styled(Box)`
   display: flex;
@@ -60,25 +84,31 @@ const StyledA = styled.a`
 `;
 
 interface Props {
-  templates: EscrowTemplate[];
   next: () => void;
 }
 
-export default function EscrowType({ templates, next }: Props) {
+export default function Template({ next }: Props) {
+  const { escrowType, setEscrowType } = useNewTransactionContext();
   const [selectedTemplate, setSelectedTemplate] = useState<EscrowTemplate>(
-    templates[0]
+    ESCROW_TEMPLATES.find((template) => template.title === escrowType) ??
+      ESCROW_TEMPLATES[0]
   );
+
+  const handleSelectTemplate = (template: EscrowTemplate) => {
+    setSelectedTemplate(template);
+    setEscrowType(template.title);
+  };
 
   return (
     <StyledBox>
       <img src={EscrowTypeImage} alt="Escrow type" />
 
       <CardContainer>
-        {templates.map((template) => (
+        {ESCROW_TEMPLATES.map((template) => (
           <StyledCard
             key={template.title}
             active={selectedTemplate.id === template.id}
-            onClick={() => setSelectedTemplate(template)}
+            onClick={() => handleSelectTemplate(template)}
             round
             hover
           >

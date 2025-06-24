@@ -4,12 +4,14 @@ import {
   FileUploader,
   TextArea,
 } from "@kleros/ui-components-library";
+import { useNewTransactionContext } from "context/newTransaction/useNewTransactionContext";
 import {
   ButtonContainer,
   mobileResponsive,
   StyledForm,
 } from "../StyledForm/StyledForm";
 import styled from "styled-components";
+import { parseZonedDateTime } from "@internationalized/date";
 
 const StyledTextArea = styled(TextArea)`
   width: 500px;
@@ -59,9 +61,24 @@ interface Props {
 }
 
 export default function Terms({ next, back }: Props) {
+  const {
+    description,
+    setDescription,
+    deadline,
+    setDeadline,
+    setAgreementFile,
+  } = useNewTransactionContext();
+
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    next();
+  };
+
   return (
-    <StyledForm onSubmit={next}>
+    <StyledForm onSubmit={handleSubmit}>
       <StyledTextArea
+        value={description}
+        onChange={(value) => setDescription(value)}
         label="Description"
         placeholder="Specify the agreement"
         isRequired
@@ -74,11 +91,17 @@ export default function Terms({ next, back }: Props) {
 
       <DeadlineContainer>
         <StyledLabel htmlFor="deadline">Deadline</StyledLabel>
-        <StyledDatepicker time isRequired name="deadline" />
+        <StyledDatepicker
+          defaultValue={deadline ? parseZonedDateTime(deadline) : undefined}
+          time
+          isRequired
+          name="deadline"
+          onChange={(value) => setDeadline(value?.toString() ?? "")}
+        />
       </DeadlineContainer>
 
       <StyledFileUploader
-        callback={() => {}}
+        callback={(file) => setAgreementFile(file)}
         msg="Upload an agreement PDF (optional)"
         acceptedFileTypes={["application/pdf"]}
       />
