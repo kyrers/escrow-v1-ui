@@ -32,18 +32,3 @@ export const MULTIPLE_ARBITRABLE_TOKEN_TRANSACTION_ADDRESS: Record<
     GENERAL_COURT: "0x6048002b6E93A4A5d93E902F2427D7472790aC97",
   },
 };
-
-export const TCR_ADDRESS: Record<number, `0x${string}`> = {
-  [mainnet.id]: "0xebcf3bca271b26ae4b162ba560e243055af0e679",
-  [sepolia.id]: "0x899B8c6fE36cbFca1e6398e33B93707fF45d6e30",
-};
-
-export const ERC20_BADGE_ADDRESS: Record<number, `0x${string}`> = {
-  [mainnet.id]: "0xcb4aae35333193232421e86cd2e9b6c91f3b125f",
-  [sepolia.id]: "0xa19f50646Ac4eA8181D41ad2c24CD860596e44e1",
-};
-
-export const TOKENS_VIEW_ADDRESS: Record<number, `0x${string}`> = {
-  [mainnet.id]: "0xf9b9b5440340123b21bff1ddafe1ad6feb9d6e7f",
-  [sepolia.id]: "0x6f9A63F3613B8dd002bd59073B23e03648eF7a0e",
-};
