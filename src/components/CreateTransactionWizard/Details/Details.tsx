@@ -1,13 +1,5 @@
-import {
-  Button,
-  DropdownSelect,
-  NumberField,
-  TextField,
-} from "@kleros/ui-components-library";
+import { Button, NumberField, TextField } from "@kleros/ui-components-library";
 import { useNewTransactionContext } from "context/newTransaction/useNewTransactionContext";
-import { ETH_TOKEN } from "config/tokens";
-import { useERC20Tokens } from "hooks/useERC20Tokens";
-import { useMemo } from "react";
 import styled from "styled-components";
 import { validateAddress } from "utils/common";
 import {
@@ -15,6 +7,7 @@ import {
   mobileResponsive,
   StyledForm,
 } from "../StyledForm/StyledForm";
+import TokenSelector from "./TokenSelector/TokenSelector";
 
 const StyledTextField = styled(TextField)`
   width: 500px;
@@ -35,18 +28,9 @@ const AmountAndTokenContainer = styled.div`
 `;
 
 const StyledNumberField = styled(NumberField)`
+  width: 242px;
+
   ${mobileResponsive}
-`;
-
-const StyledDropdownSelect = styled(DropdownSelect)`
-  button {
-    ${mobileResponsive}
-  }
-`;
-
-//Instead of having to use hacks to style the dropdown options, we can just add a small margin to the image element
-const StyledImage = styled.img`
-  margin-right: 8px;
 `;
 
 interface Props {
@@ -62,14 +46,7 @@ export default function Details({ next, back }: Props) {
     setReceiverAddress,
     amount,
     setAmount,
-    token,
-    setToken,
   } = useNewTransactionContext();
-  const { data: erc20Tokens } = useERC20Tokens();
-
-  const tokens = useMemo(() => {
-    return [ETH_TOKEN, ...erc20Tokens];
-  }, [erc20Tokens]);
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -120,30 +97,7 @@ export default function Details({ next, back }: Props) {
           showFieldError
         />
 
-        <StyledDropdownSelect
-          selectedKey={
-            tokens.find((item) => item.name === token)?.name ?? tokens[0].name
-          }
-          callback={(value) => setToken(value.id as string)}
-          label="Token"
-          name="token"
-          isRequired
-          items={[
-            ...tokens.map((token) => ({
-              icon: (
-                <StyledImage
-                  src={token.logoURI}
-                  alt={token.name}
-                  width={24}
-                  height={24}
-                />
-              ),
-              id: token.name,
-              itemValue: token.address,
-              text: token.ticker,
-            })),
-          ]}
-        />
+        <TokenSelector />
       </AmountAndTokenContainer>
 
       <ButtonContainer>
