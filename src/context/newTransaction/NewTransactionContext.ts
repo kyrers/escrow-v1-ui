@@ -1,4 +1,5 @@
 import type { EscrowType } from "model/EscrowTemplate";
+import type { EscrowToken } from "model/EscrowToken";
 import { createContext } from "react";
 
 interface INewTransactionContext {
@@ -18,6 +19,8 @@ interface INewTransactionContext {
   setAmount: (amount: number) => void;
   token: string;
   setToken: (token: string) => void;
+  userAddedTokens: EscrowToken[];
+  setUserAddedTokens: (tokens: EscrowToken[]) => void;
   deadline: string | undefined;
   setDeadline: (deadline: string) => void;
   resetContext: () => void;
@@ -40,6 +43,8 @@ export const NewTransactionContext = createContext<INewTransactionContext>({
   setAmount: () => {},
   token: "",
   setToken: () => {},
+  userAddedTokens: [],
+  setUserAddedTokens: () => {},
   deadline: "",
   setDeadline: () => {},
   resetContext: () => {},

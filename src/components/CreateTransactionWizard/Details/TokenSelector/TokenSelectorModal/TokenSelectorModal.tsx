@@ -3,10 +3,12 @@ import { mobileResponsive } from "components/CreateTransactionWizard/StyledForm/
 import type { EscrowToken } from "model/EscrowToken";
 import { useMemo, useState } from "react";
 import styled from "styled-components";
+import AddCustomToken from "./AddCustomToken/AddCustomToken";
 
 const StyledModal = styled(Modal)`
   width: 500px;
-  height: 300px;
+  height: 100%;
+  max-height: 500px;
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -30,6 +32,10 @@ const ItemsContainer = styled.div`
 
 const StyledP = styled.p`
   font-weight: bold;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
+    align-self: center;
+  }
 `;
 
 const TokenItem = styled.div`
@@ -50,6 +56,7 @@ interface Props {
   escrowTokens: EscrowToken[];
   isOpen: boolean;
   onClose: () => void;
+  handleAddToken: (token: EscrowToken) => void;
   handleSelectToken: (token: EscrowToken) => void;
 }
 
@@ -57,6 +64,7 @@ export default function TokenSelectorModal({
   escrowTokens,
   isOpen,
   onClose,
+  handleAddToken,
   handleSelectToken,
 }: Props) {
   const [search, setSearch] = useState<string>("");
@@ -83,10 +91,16 @@ export default function TokenSelectorModal({
 
   return (
     <StyledModal isOpen={isOpen} isDismissable onOpenChange={handleOpenChange}>
-      <StyledP>Select a token</StyledP>
+      <StyledP>Add custom token</StyledP>
+      <AddCustomToken
+        existingTokens={escrowTokens}
+        onAddToken={handleAddToken}
+      />
+
+      <StyledP>Select token</StyledP>
       <StyledSearchbar
-        aria-label="Search or paste an address"
-        placeholder="Search or paste an address"
+        aria-label="Search token"
+        placeholder="Search token"
         value={search}
         onChange={(value) => setSearch(value)}
       />
