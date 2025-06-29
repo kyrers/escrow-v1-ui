@@ -56,8 +56,8 @@ export default function AddCustomToken({ existingTokens, onAddToken }: Props) {
       await alchemyInstance.core.getTokenMetadata(tokenAddress);
 
     const token: EscrowToken = {
-      name: tokenMetadata.name ?? "Unknown",
-      ticker: tokenMetadata.symbol ?? "Unknown",
+      name: tokenMetadata.name ? tokenMetadata.name : "Unknown",
+      ticker: tokenMetadata.symbol ? tokenMetadata.symbol : "Unknown",
       address: tokenAddress as `0x${string}`,
       logo: tokenMetadata.logo ?? UnknownTokenLogo,
       decimals: tokenMetadata.decimals ?? 18,

@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { NewTransactionContext } from "./NewTransactionContext";
 import type { EscrowType } from "model/EscrowTemplate";
 import type { EscrowToken } from "model/EscrowToken";
+import { useAccount } from "wagmi";
 
 export const NewTransactionProvider: React.FC<{
   children: React.ReactNode;
@@ -18,6 +19,7 @@ export const NewTransactionProvider: React.FC<{
   const [token, setToken] = useState<string>("");
   const [userAddedTokens, setUserAddedTokens] = useState<EscrowToken[]>([]);
   const [deadline, setDeadline] = useState<string>();
+  const { chain } = useAccount();
 
   const resetContext = () => {
     setEscrowType("Cryptocurrency Transaction");
@@ -31,6 +33,10 @@ export const NewTransactionProvider: React.FC<{
     setUserAddedTokens([]);
     setDeadline(undefined);
   };
+
+  useEffect(() => {
+    setUserAddedTokens([]);
+  }, [chain?.id]);
 
   return (
     <NewTransactionContext.Provider
