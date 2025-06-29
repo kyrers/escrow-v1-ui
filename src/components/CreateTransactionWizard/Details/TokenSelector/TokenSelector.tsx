@@ -7,22 +7,26 @@ import TokenSelectorButton from "./TokenSelectorButton/TokenSelectorButton";
 import type { EscrowToken } from "model/EscrowToken";
 
 export default function TokenSelector() {
-  const { token, setToken } = useNewTransactionContext();
+  const { token, setToken, userAddedTokens, setUserAddedTokens } =
+    useNewTransactionContext();
   const { chain } = useAccount();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const escrowTokens = getEscrowTokens(chain?.id ?? 1);
+  const allTokens = [...userAddedTokens, ...escrowTokens];
 
   const handleSelectToken = (token: EscrowToken) => {
     setToken(token.name);
     setIsModalOpen(false);
   };
 
+  const handleAddToken = (token: EscrowToken) => {
+    setUserAddedTokens([...userAddedTokens, token]);
+  };
+
   return (
     <>
       <TokenSelectorButton
-        token={
-          escrowTokens.find((item) => item.name === token) ?? escrowTokens[0]
-        }
+        token={allTokens.find((item) => item.name === token) ?? allTokens[0]}
         onClick={() => setIsModalOpen(true)}
       />
 
@@ -30,7 +34,8 @@ export default function TokenSelector() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         handleSelectToken={handleSelectToken}
-        escrowTokens={escrowTokens}
+        handleAddToken={handleAddToken}
+        escrowTokens={allTokens}
       />
     </>
   );

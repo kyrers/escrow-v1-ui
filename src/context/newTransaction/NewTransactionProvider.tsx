@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { NewTransactionContext } from "./NewTransactionContext";
 import type { EscrowType } from "model/EscrowTemplate";
+import type { EscrowToken } from "model/EscrowToken";
 
 export const NewTransactionProvider: React.FC<{
   children: React.ReactNode;
@@ -15,6 +16,7 @@ export const NewTransactionProvider: React.FC<{
   const [receiverAddress, setReceiverAddress] = useState<string>("");
   const [amount, setAmount] = useState<number>(0);
   const [token, setToken] = useState<string>("");
+  const [userAddedTokens, setUserAddedTokens] = useState<EscrowToken[]>([]);
   const [deadline, setDeadline] = useState<string>();
 
   const resetContext = () => {
@@ -26,6 +28,7 @@ export const NewTransactionProvider: React.FC<{
     setReceiverAddress("");
     setAmount(0);
     setToken("");
+    setUserAddedTokens([]);
     setDeadline(undefined);
   };
 
@@ -48,6 +51,8 @@ export const NewTransactionProvider: React.FC<{
         setAmount,
         token,
         setToken,
+        userAddedTokens,
+        setUserAddedTokens,
         deadline,
         setDeadline,
         resetContext,
