@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { DisplaySmall } from "@kleros/ui-components-library";
+import { StyledDisplaySmall } from "components/Common/Form/StyledDisplaySmall";
 import { addressToShortString } from "utils/common";
 import { formatDeadlineDate } from "utils/transaction";
 
@@ -11,20 +11,6 @@ const Container = styled.div`
 
   @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
     justify-content: center;
-  }
-`;
-
-const StyledDisplaySmall = styled(DisplaySmall)`
-  overflow: hidden;
-  white-space: nowrap;
-  height: fit-content;
-
-  label {
-    font-weight: bold;
-  }
-
-  div {
-    margin-top: 0;
   }
 `;
 
