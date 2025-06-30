@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 const TitleContainer = styled.div`
-  @media (max-width: ${({ theme }) => theme.breakpoints.xs}) {
+  @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
     text-align: center;
   }
 `;
