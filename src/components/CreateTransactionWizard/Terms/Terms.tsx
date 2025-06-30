@@ -11,7 +11,11 @@ import {
   StyledForm,
 } from "../StyledForm/StyledForm";
 import styled from "styled-components";
-import { parseZonedDateTime } from "@internationalized/date";
+import {
+  getLocalTimeZone,
+  now,
+  parseZonedDateTime,
+} from "@internationalized/date";
 
 const StyledTextArea = styled(TextArea)`
   width: 500px;
@@ -90,13 +94,14 @@ export default function Terms({ next, back }: Props) {
       />
 
       <DeadlineContainer>
-        <StyledLabel htmlFor="deadline">Deadline</StyledLabel>
+        <StyledLabel htmlFor="deadline">Deadline (Local time)</StyledLabel>
         <StyledDatepicker
+          name="deadline"
+          minValue={now(getLocalTimeZone())}
           defaultValue={deadline ? parseZonedDateTime(deadline) : undefined}
+          onChange={(value) => setDeadline(value?.toString() ?? "")}
           time
           isRequired
-          name="deadline"
-          onChange={(value) => setDeadline(value?.toString() ?? "")}
         />
       </DeadlineContainer>
 

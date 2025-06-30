@@ -8,6 +8,7 @@ import { useTransactionDetails } from "hooks/useTransactionDetails";
 import { BaseSkeleton } from "components/Common/Skeleton/BaseSkeleton";
 import { useMemo } from "react";
 import { getIpfsUrl } from "utils/ipfs";
+import { DefaultDivider } from "components/Common/Dividers/DefaultDivider";
 import Agreement from "./Agreement/Agreement";
 import TitleAndType from "./TitleAndType/TitleAndType";
 import Header from "./Header/Header";
@@ -28,10 +29,6 @@ const StyledBox = styled(Box)`
   gap: 16px;
   padding: 8px 16px;
   align-self: center;
-`;
-
-const StyledHr = styled.hr`
-  border-bottom: 1px solid ${({ theme }) => theme.colors.primaryBlue};
 `;
 
 const StyledA = styled.a`
@@ -132,7 +129,7 @@ export default function TransactionDetails({ id, contractAddress }: Props) {
         title={transaction.metaEvidence.title}
       />
 
-      <StyledHr />
+      <DefaultDivider />
 
       <Summary
         originalAmount={transaction.metaEvidence.amount}
@@ -140,16 +137,17 @@ export default function TransactionDetails({ id, contractAddress }: Props) {
         ticker={transaction.metaEvidence.token?.ticker ?? "ETH"}
         sender={transaction.metaEvidence.sender}
         receiver={transaction.metaEvidence.receiver}
+        deadline={transaction.metaEvidence.extraData["Due Date (Local Time)"]}
       />
 
-      <StyledHr />
+      <DefaultDivider />
 
       <Agreement
         description={transaction.metaEvidence.description}
         agreementDocURI={transaction.metaEvidence.fileURI}
       />
 
-      <StyledHr />
+      <DefaultDivider />
 
       <CustomTimeline items={timelineItems} />
     </StyledBox>
