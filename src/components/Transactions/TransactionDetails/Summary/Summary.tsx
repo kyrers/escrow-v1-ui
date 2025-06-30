@@ -21,6 +21,10 @@ const StyledDisplaySmall = styled(DisplaySmall)`
   label {
     font-weight: bold;
   }
+
+  div {
+    margin-top: 0;
+  }
 `;
 
 interface Props {

@@ -4,13 +4,14 @@ import {
   Box,
   CustomTimeline,
 } from "@kleros/ui-components-library";
-import Agreement from "./Agreement/Agreement";
 import { useTransactionDetails } from "hooks/useTransactionDetails";
 import { BaseSkeleton } from "components/Common/Skeleton/BaseSkeleton";
-import Header from "./Header/Header";
 import { useMemo } from "react";
-import Summary from "./Summary/Summary";
 import { getIpfsUrl } from "utils/ipfs";
+import Agreement from "./Agreement/Agreement";
+import TitleAndType from "./TitleAndType/TitleAndType";
+import Header from "./Header/Header";
+import Summary from "./Summary/Summary";
 
 const StyledSkeleton = styled(BaseSkeleton)`
   height: 100%;
@@ -30,7 +31,7 @@ const StyledBox = styled(Box)`
 `;
 
 const StyledHr = styled.hr`
-  border: 1px solid ${({ theme }) => theme.colors.primaryBlue};
+  border-bottom: 1px solid ${({ theme }) => theme.colors.primaryBlue};
 `;
 
 const StyledA = styled.a`
@@ -40,11 +41,6 @@ const StyledA = styled.a`
   &:hover {
     text-decoration: underline;
   }
-`;
-
-type TimelineItems = React.ComponentProps<typeof CustomTimeline>["items"];
-const StyledTimeline = styled(CustomTimeline)`
-  align-self: center;
 `;
 
 const TimelinePartyContainer = styled.div`
@@ -57,6 +53,7 @@ const StyledSpan = styled.span`
   color: ${({ theme }) => theme.colors.secondaryText};
 `;
 
+type TimelineItems = React.ComponentProps<typeof CustomTimeline>["items"];
 interface Props {
   id: bigint;
   contractAddress: `0x${string}`;
@@ -130,13 +127,9 @@ export default function TransactionDetails({ id, contractAddress }: Props) {
         createdAt={transaction.createdAt}
       />
 
-      <StyledHr />
-
-      <Agreement
+      <TitleAndType
         escrowType={transaction.metaEvidence.subCategory}
         title={transaction.metaEvidence.title}
-        description={transaction.metaEvidence.description}
-        agreementDocURI={transaction.metaEvidence.fileURI}
       />
 
       <StyledHr />
@@ -149,7 +142,16 @@ export default function TransactionDetails({ id, contractAddress }: Props) {
         receiver={transaction.metaEvidence.receiver}
       />
 
-      <StyledTimeline items={timelineItems} />
+      <StyledHr />
+
+      <Agreement
+        description={transaction.metaEvidence.description}
+        agreementDocURI={transaction.metaEvidence.fileURI}
+      />
+
+      <StyledHr />
+
+      <CustomTimeline items={timelineItems} />
     </StyledBox>
   );
 }
