@@ -133,6 +133,7 @@ export default function TransactionDetails({ id, contractAddress }: Props) {
       <StyledHr />
 
       <Agreement
+        escrowType={transaction.metaEvidence.subCategory}
         title={transaction.metaEvidence.title}
         description={transaction.metaEvidence.description}
         agreementDocURI={transaction.metaEvidence.fileURI}
