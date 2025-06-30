@@ -2,6 +2,11 @@ import styled from "styled-components";
 import { getIpfsUrl } from "utils/ipfs";
 import DocIcon from "assets/doc.svg?react";
 
+const EscrowType = styled.p`
+  font-weight: bold;
+  color: ${({ theme }) => theme.colors.primaryPurple};
+`;
+
 const Title = styled.h1`
   font-size: 1.5em;
   font-weight: bold;
@@ -25,19 +30,24 @@ const StyledA = styled.a`
 `;
 
 interface Props {
+  escrowType: string;
   title: string;
   description: string;
   agreementDocURI?: string;
 }
 
 export default function Agreement({
+  escrowType,
   title,
   description,
   agreementDocURI,
 }: Props) {
   return (
     <>
-      <Title>{title}</Title>
+      <div>
+        <EscrowType>{escrowType}</EscrowType>
+        <Title>{title}</Title>
+      </div>
 
       <Description>{description}</Description>
 
