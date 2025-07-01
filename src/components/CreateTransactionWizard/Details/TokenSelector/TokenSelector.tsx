@@ -27,7 +27,8 @@ export default function TokenSelector() {
     <>
       <TokenSelectorButton
         token={
-          allTokens.find((item) => item.name === token.name) ?? allTokens[0]
+          allTokens.find((item) => item.address === token.address) ??
+          allTokens[0]
         }
         onClick={() => setIsModalOpen(true)}
       />
