@@ -1,0 +1,125 @@
+import styled from "styled-components";
+import { Button, Card } from "@kleros/ui-components-library";
+import { ButtonContainer } from "../StyledForm/StyledForm";
+import { useNewTransactionContext } from "context/newTransaction/useNewTransactionContext";
+import { addressToShortString } from "utils/common";
+import { parseZonedDateTime } from "@internationalized/date";
+import Agreement from "components/Transactions/TransactionDetails/Agreement/Agreement";
+import TitleAndType from "components/Transactions/TransactionDetails/TitleAndType/TitleAndType";
+import { DefaultDivider } from "components/Common/Dividers/DefaultDivider";
+import { formatDeadlineDate } from "utils/transaction";
+import { StyledDisplaySmall } from "components/Common/Form/StyledDisplaySmall";
+import { useEffect, useState } from "react";
+
+interface Props {
+  back: () => void;
+}
+
+const StyledCard = styled(Card)`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 60%;
+  height: fit-content;
+  max-height: 100%;
+  overflow-y: auto;
+  gap: 8px;
+  padding: 16px;
+  border-radius: ${({ theme }) => theme.radius.boxDefault};
+`;
+
+const StyledButtonContainer = styled(ButtonContainer)`
+  align-self: center;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
+    align-items: center;
+    flex-direction: column;
+  }
+`;
+
+const SummaryContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 4px;
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
+    justify-content: center;
+  }
+`;
+
+export default function Preview({ back }: Props) {
+  const {
+    agreementFile,
+    amount,
+    deadline,
+    description,
+    escrowType,
+    receiverAddress,
+    senderAddress,
+    title,
+    token,
+  } = useNewTransactionContext();
+
+  const [tempFileUrl, setTempFileUrl] = useState<string | undefined>();
+
+  //Clean up the URL when component unmounts
+  //See https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL_static#memory_management
+  useEffect(() => {
+    const url = agreementFile ? URL.createObjectURL(agreementFile) : undefined;
+    setTempFileUrl(url);
+
+    return () => {
+      if (url) {
+        URL.revokeObjectURL(url);
+      }
+    };
+  }, [agreementFile]);
+
+  return (
+    <StyledCard>
+      <TitleAndType escrowType={escrowType} title={title} />
+
+      <DefaultDivider />
+
+      <SummaryContainer>
+        <StyledDisplaySmall
+          label="Amount"
+          text={`${amount} ${token.ticker}`}
+          Icon={() => <></>}
+        />
+
+        <StyledDisplaySmall
+          label="Sender"
+          text={addressToShortString(senderAddress)}
+          Icon={() => <></>}
+        />
+
+        <StyledDisplaySmall
+          label="Receiver"
+          text={addressToShortString(receiverAddress)}
+          Icon={() => <></>}
+        />
+
+        <StyledDisplaySmall
+          label="Deadline (UTC)"
+          text={formatDeadlineDate(parseZonedDateTime(deadline ?? "").toDate())}
+          Icon={() => <></>}
+        />
+      </SummaryContainer>
+
+      <DefaultDivider />
+
+      <Agreement
+        description={description}
+        agreementDocURI={tempFileUrl}
+        useIpfs={false}
+      />
+
+      <StyledButtonContainer>
+        <Button small text="Back" onPress={back} />
+        <Button small text="Create escrow" onPress={() => {}} />
+      </StyledButtonContainer>
+    </StyledCard>
+  );
+}
