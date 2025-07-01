@@ -1,6 +1,7 @@
+import { createContext } from "react";
 import type { EscrowType } from "model/EscrowTemplate";
 import type { EscrowToken } from "model/EscrowToken";
-import { createContext } from "react";
+import { ETH_TOKEN } from "config/tokens";
 
 interface INewTransactionContext {
   escrowType: EscrowType;
@@ -17,8 +18,8 @@ interface INewTransactionContext {
   setReceiverAddress: (address: string) => void;
   amount: number;
   setAmount: (amount: number) => void;
-  token: string;
-  setToken: (token: string) => void;
+  token: EscrowToken;
+  setToken: (token: EscrowToken) => void;
   userAddedTokens: EscrowToken[];
   setUserAddedTokens: (tokens: EscrowToken[]) => void;
   deadline: string | undefined;
@@ -41,7 +42,7 @@ export const NewTransactionContext = createContext<INewTransactionContext>({
   setReceiverAddress: () => {},
   amount: 0,
   setAmount: () => {},
-  token: "",
+  token: ETH_TOKEN,
   setToken: () => {},
   userAddedTokens: [],
   setUserAddedTokens: () => {},

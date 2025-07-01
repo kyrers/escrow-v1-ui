@@ -13,7 +13,7 @@ import UNI_LOGO from "assets/uni.png";
 import AAVE_LOGO from "assets/aave.png";
 import LINK_LOGO from "assets/link.png";
 
-const ETH_TOKEN: EscrowToken = {
+export const ETH_TOKEN: EscrowToken = {
   name: "Ethereum",
   ticker: "ETH",
   address: zeroAddress,
