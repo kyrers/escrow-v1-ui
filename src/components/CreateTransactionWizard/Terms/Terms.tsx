@@ -16,6 +16,7 @@ import {
   now,
   parseZonedDateTime,
 } from "@internationalized/date";
+import { formatFileName } from "utils/common";
 
 const StyledTextArea = styled(TextArea)`
   width: 500px;
@@ -37,7 +38,7 @@ const StyledFileUploader = styled(FileUploader)`
   ${mobileResponsive}
 `;
 
-const DeadlineContainer = styled.div`
+const CustomFormElementContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -53,6 +54,7 @@ const StyledLabel = styled.label`
 
 const StyledDatepicker = styled(Datepicker)`
   div {
+    overflow: hidden;
     width: 500px;
 
     ${mobileResponsive}
@@ -66,6 +68,7 @@ interface Props {
 
 export default function Terms({ next, back }: Props) {
   const {
+    agreementFile,
     description,
     setDescription,
     deadline,
@@ -76,6 +79,14 @@ export default function Terms({ next, back }: Props) {
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     next();
+  };
+
+  const handleFileUpload = (file: File) => {
+    if (file.type !== "application/pdf") {
+      return;
+    }
+
+    setAgreementFile(file);
   };
 
   return (
@@ -93,7 +104,7 @@ export default function Terms({ next, back }: Props) {
         showFieldError
       />
 
-      <DeadlineContainer>
+      <CustomFormElementContainer>
         <StyledLabel htmlFor="deadline">Deadline (Local time)</StyledLabel>
         <StyledDatepicker
           name="deadline"
@@ -103,13 +114,22 @@ export default function Terms({ next, back }: Props) {
           time
           isRequired
         />
-      </DeadlineContainer>
+      </CustomFormElementContainer>
 
-      <StyledFileUploader
-        callback={(file) => setAgreementFile(file)}
-        msg="Upload an agreement PDF (optional)"
-        acceptedFileTypes={["application/pdf"]}
-      />
+      <CustomFormElementContainer>
+        <StyledLabel htmlFor="agreement">
+          Upload an agreement PDF (optional)
+        </StyledLabel>
+        <StyledFileUploader
+          callback={handleFileUpload}
+          msg={
+            agreementFile
+              ? `Current file: ${formatFileName(agreementFile.name)}`
+              : "Non PDF files will be ignored"
+          }
+          acceptedFileTypes={["application/pdf"]}
+        />
+      </CustomFormElementContainer>
 
       <ButtonContainer>
         <Button small text="Back" onPress={back} />
