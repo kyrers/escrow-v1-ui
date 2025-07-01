@@ -15,7 +15,7 @@ export default function TokenSelector() {
   const allTokens = [...userAddedTokens, ...escrowTokens];
 
   const handleSelectToken = (token: EscrowToken) => {
-    setToken(token.name);
+    setToken(token);
     setIsModalOpen(false);
   };
 
@@ -26,7 +26,9 @@ export default function TokenSelector() {
   return (
     <>
       <TokenSelectorButton
-        token={allTokens.find((item) => item.name === token) ?? allTokens[0]}
+        token={
+          allTokens.find((item) => item.name === token.name) ?? allTokens[0]
+        }
         onClick={() => setIsModalOpen(true)}
       />
 
