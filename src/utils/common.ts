@@ -44,6 +44,14 @@ export async function fetchBlockTimestamps(
 }
 
 const ethAddressPattern = /^0x[a-fA-F0-9]{40}$/;
-export const validateAddress = (input: string) => {
+export function validateAddress(input: string) {
   return ethAddressPattern.test(input);
-};
+}
+
+export function formatFileName(fileName: string) {
+  if (fileName.length <= 15) {
+    return fileName;
+  }
+
+  return `${fileName.slice(0, 8)}...${fileName.slice(-6)}`;
+}

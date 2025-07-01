@@ -95,6 +95,11 @@ export default function Details({ next, back }: Props) {
             value > 0 ? true : "Amount must be greater than 0"
           }
           showFieldError
+          formatOptions={{
+            //Prevent automatic rounding of very small amounts
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 18,
+          }}
         />
 
         <TokenSelector />

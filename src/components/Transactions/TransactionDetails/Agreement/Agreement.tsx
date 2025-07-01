@@ -26,9 +26,22 @@ const StyledA = styled.a`
 interface Props {
   description: string;
   agreementDocURI?: string;
+  useIpfs?: boolean;
 }
 
-export default function Agreement({ description, agreementDocURI }: Props) {
+const getDocumentUrl = (uri: string, useIpfs: boolean) => {
+  if (!useIpfs) {
+    return uri;
+  }
+
+  return getIpfsUrl(uri);
+};
+
+export default function Agreement({
+  description,
+  agreementDocURI,
+  useIpfs = true,
+}: Props) {
   return (
     <>
       <StyledP>Terms</StyledP>
@@ -37,7 +50,7 @@ export default function Agreement({ description, agreementDocURI }: Props) {
 
       {agreementDocURI && (
         <StyledA
-          href={getIpfsUrl(agreementDocURI)}
+          href={getDocumentUrl(agreementDocURI, useIpfs)}
           target="_blank"
           rel="noopener noreferrer"
         >
