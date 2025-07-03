@@ -54,7 +54,7 @@ const Description = styled.p`
   display: -webkit-box;
   text-overflow: ellipsis;
   overflow: hidden;
-  word-break: break-all;
+  word-break: break-word;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
 `;
