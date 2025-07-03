@@ -4,11 +4,11 @@ import DocIcon from "assets/doc.svg?react";
 
 const StyledP = styled.p`
   font-weight: bold;
-  word-break: break-all;
+  word-break: break-word;
 `;
 
 const Description = styled.p`
-  word-break: break-all;
+  word-break: break-word;
   white-space: pre-wrap;
 `;
 

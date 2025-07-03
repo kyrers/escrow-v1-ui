@@ -9,13 +9,13 @@ const TitleContainer = styled.div`
 const EscrowType = styled.p`
   font-weight: bold;
   color: ${({ theme }) => theme.colors.primaryPurple};
-  word-break: break-all;
+  word-break: break-word;
 `;
 
 const Title = styled.h1`
   font-size: 1.5em;
   font-weight: bold;
-  word-break: break-all;
+  word-break: break-word;
 `;
 
 interface Props {
