@@ -1,15 +1,16 @@
+import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { Button, Card } from "@kleros/ui-components-library";
-import { ButtonContainer } from "../StyledForm/StyledForm";
 import { useNewTransactionContext } from "context/newTransaction/useNewTransactionContext";
+import { useCreateTransaction } from "hooks/useCreateTransaction";
+import { AlertMessage, Button, Card } from "@kleros/ui-components-library";
+import { ButtonContainer } from "../StyledForm/StyledForm";
 import { addressToShortString } from "utils/common";
+import { formatDeadlineDate } from "utils/transaction";
 import { parseZonedDateTime } from "@internationalized/date";
 import Agreement from "components/Transactions/TransactionDetails/Agreement/Agreement";
 import TitleAndType from "components/Transactions/TransactionDetails/TitleAndType/TitleAndType";
 import { DefaultDivider } from "components/Common/Dividers/DefaultDivider";
-import { formatDeadlineDate } from "utils/transaction";
 import { StyledDisplaySmall } from "components/Common/Form/StyledDisplaySmall";
-import { useEffect, useState } from "react";
 
 interface Props {
   back: () => void;
@@ -26,6 +27,11 @@ const StyledCard = styled(Card)`
   gap: 8px;
   padding: 16px;
   border-radius: ${({ theme }) => theme.radius.boxDefault};
+`;
+
+const StyledAlertMessage = styled(AlertMessage)`
+  overflow: hidden;
+  word-break: break-word;
 `;
 
 const StyledButtonContainer = styled(ButtonContainer)`
@@ -60,6 +66,7 @@ export default function Preview({ back }: Props) {
     title,
     token,
   } = useNewTransactionContext();
+  const { isCreating, error, createTransaction } = useCreateTransaction();
 
   const [tempFileUrl, setTempFileUrl] = useState<string | undefined>();
 
@@ -78,6 +85,14 @@ export default function Preview({ back }: Props) {
 
   return (
     <StyledCard>
+      {error && (
+        <StyledAlertMessage
+          title="Error creating transaction"
+          msg={error}
+          variant="error"
+        />
+      )}
+
       <TitleAndType escrowType={escrowType} title={title} />
 
       <DefaultDivider />
@@ -103,7 +118,7 @@ export default function Preview({ back }: Props) {
 
         <StyledDisplaySmall
           label="Deadline (UTC)"
-          text={formatDeadlineDate(parseZonedDateTime(deadline ?? "").toDate())}
+          text={formatDeadlineDate(parseZonedDateTime(deadline).toDate())}
           Icon={() => <></>}
         />
       </SummaryContainer>
@@ -117,8 +132,20 @@ export default function Preview({ back }: Props) {
       />
 
       <StyledButtonContainer>
-        <Button small text="Back" onPress={back} />
-        <Button small text="Create escrow" onPress={() => {}} />
+        <Button
+          small
+          text="Back"
+          onPress={back}
+          isLoading={isCreating}
+          isDisabled={isCreating}
+        />
+        <Button
+          small
+          text="Create escrow"
+          onPress={() => createTransaction()}
+          isLoading={isCreating}
+          isDisabled={isCreating}
+        />
       </StyledButtonContainer>
     </StyledCard>
   );
