@@ -22,7 +22,7 @@ interface INewTransactionContext {
   setToken: (token: EscrowToken) => void;
   userAddedTokens: EscrowToken[];
   setUserAddedTokens: (tokens: EscrowToken[]) => void;
-  deadline: string | undefined;
+  deadline: string;
   setDeadline: (deadline: string) => void;
   resetContext: () => void;
 }

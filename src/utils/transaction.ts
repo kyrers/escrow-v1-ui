@@ -6,8 +6,8 @@ import {
   disputeEvent,
   appealDecisionEvent,
   evidenceEvent,
-  type ContractEventLogs,
   type EvidenceLogs,
+  type TimelineEventLogs,
 } from "config/contracts/events";
 import { formatUnits } from "viem";
 import { addressToShortString, getBlockExplorerLink } from "./common";
@@ -35,7 +35,7 @@ export const mapTransactionStatus = (
 };
 
 export function formatTimelineEvents(
-  timelineEvents: ContractEventLogs,
+  timelineEvents: TimelineEventLogs,
   evidenceLogs: EvidenceLogs,
   evidenceContent: Evidence[],
   blockTimestamps: bigint[],

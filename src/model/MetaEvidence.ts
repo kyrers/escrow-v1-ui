@@ -9,7 +9,7 @@ interface Token {
 interface RulingOptions {
   descriptions: string[];
   titles: string[];
-  type: "single-select" | "multiple-select0" | "uint" | "int" | "string";
+  type: string;
 }
 
 interface ExtraData {
