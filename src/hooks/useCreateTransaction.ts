@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router";
 import {
   MULTIPLE_ARBITRABLE_TOKEN_TRANSACTION_ADDRESS,
   MULTIPLE_ARBITRABLE_TRANSACTION_ADDRESS,
@@ -15,21 +16,22 @@ import {
   BaseError,
   decodeEventLog,
 } from "viem";
-import { useAccount, useWriteContract, useClient } from "wagmi";
-import { ipfsPost } from "utils/ipfs";
-import { uploadMetaEvidence } from "utils/metaEvidence";
 import {
   readContract,
   simulateContract,
   waitForTransactionReceipt,
 } from "viem/actions";
+import { useAccount, useWriteContract, useClient } from "wagmi";
+import { getBalance } from "wagmi/actions";
+import { wagmiConfig } from "config/reown";
 import { MULTIPLE_ARBITRABLE_TOKEN_TRANSACTION_ABI } from "config/contracts/abi/mutlipleArbitrableTokenTransaction";
 import { MULTIPLE_ARBITRABLE_TRANSACTION_ABI } from "config/contracts/abi/multipleArbitrableTransaction";
 import {
   nativeTransactionCreatedEvent,
   tokenTrasactionCreatedEvent,
 } from "config/contracts/events";
-import { useNavigate } from "react-router";
+import { ipfsPost } from "utils/ipfs";
+import { uploadMetaEvidence } from "utils/metaEvidence";
 
 export function useCreateTransaction() {
   const client = useClient();
@@ -195,6 +197,18 @@ export function useCreateTransaction() {
 
     if (!contractAddress) {
       setError("No contract address found for current network");
+      setIsCreating(false);
+      return;
+    }
+
+    //Check if the sender has enough balance to cover the transaction amount, if not, we can stop right now
+    const userBalance = await getBalance(wagmiConfig, {
+      address: senderAddress as `0x${string}`,
+      ...(isTokenTransaction ? { token: token.address } : {}),
+    });
+
+    if (userBalance.value < formattedAmount) {
+      setError("Insufficient balance");
       setIsCreating(false);
       return;
     }
