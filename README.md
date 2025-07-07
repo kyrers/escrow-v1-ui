@@ -1,7 +1,21 @@
 # Escrow V1 UI
 
-Local development:
+For local development:
+
+1. Install dependencies:
 
 ```bash
-yarn install && yarn dev
+yarn install
+```
+
+2. Generate hooks using `wagmi/cli`:
+
+```bash
+yarn generate
+```
+
+3. Run:
+
+```bash
+yarn dev
 ```
