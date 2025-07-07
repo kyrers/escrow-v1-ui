@@ -194,7 +194,11 @@ function mapToTransaction(
     }),
     arbitrableAddress: contractAddress,
     metaEvidence: metaEvidence,
-    status: mapTransactionStatus(TransactionStatus[status], amountInEscrow),
+    status: status,
+    formattedStatus: mapTransactionStatus(
+      TransactionStatus[status],
+      amountInEscrow
+    ),
     lastInteraction: Number(lastInteraction),
     amountInEscrow: amountInEscrow,
     blockExplorerLink: blockExplorerLink,

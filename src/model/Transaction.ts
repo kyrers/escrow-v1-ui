@@ -21,7 +21,7 @@ interface BaseTransaction {
   lastInteraction: number;
   arbitrableAddress: string;
   metaEvidence: MetaEvidence;
-  status: string;
+  formattedStatus: string;
 }
 
 //Used for cards
@@ -36,4 +36,5 @@ export interface Transaction extends BaseTransaction {
   disputeId: bigint;
   blockExplorerLink: string;
   timeline: TimelineEvent[];
+  status: number;
 }

@@ -78,8 +78,8 @@ export default function TransactionCard({ transaction }: Props) {
         <CardEdge>
           <TransactionStatusTag
             active
-            status={transaction.status}
-            text={transaction.status}
+            status={transaction.formattedStatus}
+            text={transaction.formattedStatus}
           />
           <AmountTag
             active

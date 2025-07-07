@@ -132,7 +132,10 @@ function mapToTransactionMini(
     userPartyLabel: userParty,
     otherPartyAddress:
       userParty === "sender" ? metaEvidence.receiver : metaEvidence.sender,
-    status: mapTransactionStatus(TransactionStatus[status], txAmountInEscrow),
+    formattedStatus: mapTransactionStatus(
+      TransactionStatus[status],
+      txAmountInEscrow
+    ),
     lastInteraction: Number(lastInteraction),
   };
 }

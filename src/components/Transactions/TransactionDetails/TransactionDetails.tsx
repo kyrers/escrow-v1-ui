@@ -5,10 +5,10 @@ import {
   CustomTimeline,
 } from "@kleros/ui-components-library";
 import { useTransactionDetails } from "hooks/useTransactionDetails";
-import { BaseSkeleton } from "components/Common/Skeleton/BaseSkeleton";
 import { useMemo } from "react";
 import { getIpfsUrl } from "utils/ipfs";
 import { DefaultDivider } from "components/Common/Dividers/DefaultDivider";
+import { BaseSkeleton } from "components/Common/Skeleton/BaseSkeleton";
 import Agreement from "./Agreement/Agreement";
 import TitleAndType from "./TitleAndType/TitleAndType";
 import Header from "./Header/Header";
@@ -119,7 +119,7 @@ export default function TransactionDetails({ id, contractAddress }: Props) {
   return (
     <StyledBox>
       <Header
-        status={transaction.status}
+        status={transaction.formattedStatus}
         blockExplorerLink={transaction.blockExplorerLink}
         createdAt={transaction.createdAt}
       />
