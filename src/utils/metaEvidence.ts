@@ -1,5 +1,5 @@
 import type { EscrowToken } from "model/EscrowToken";
-import type { MetaEvidence } from "model/MetaEvidence";
+import { NO_TIMEOUT_VALUE, type MetaEvidence } from "model/MetaEvidence";
 import { parseZonedDateTime } from "@internationalized/date";
 import { ipfsPost } from "./ipfs";
 
@@ -61,7 +61,7 @@ export async function uploadMetaEvidence({
     receiver: receiverAddress,
     sender: senderAddress,
     subCategory: escrowType,
-    timeout: 0, //No automatic payments yet
+    timeout: NO_TIMEOUT_VALUE, //No automatic payments yet
     title: title,
     token: {
       address: token.address,

@@ -20,6 +20,8 @@ interface ExtraData {
   "Contract Information"?: string;
 }
 
+export const NO_TIMEOUT_VALUE = 8640000000000000;
+
 export interface MetaEvidence {
   aliases: Record<string, string>;
   amount: string;
