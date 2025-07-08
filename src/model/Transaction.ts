@@ -9,6 +9,12 @@ export enum TransactionStatus {
   Resolved,
 }
 
+export type FormattedTransactionStatus =
+  | "Pending"
+  | "Completed"
+  | "Disputed"
+  | "Unknown";
+
 export enum DisputeRuling {
   "Jurors refused to arbitrate",
   "Jurors ruled in favor of the sender",
@@ -21,7 +27,7 @@ interface BaseTransaction {
   lastInteraction: number;
   arbitrableAddress: string;
   metaEvidence: MetaEvidence;
-  formattedStatus: string;
+  formattedStatus: FormattedTransactionStatus;
 }
 
 //Used for cards

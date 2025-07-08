@@ -11,13 +11,16 @@ import {
 } from "config/contracts/events";
 import { formatUnits } from "viem";
 import { addressToShortString, getBlockExplorerLink } from "./common";
-import { DisputeRuling } from "model/Transaction";
+import {
+  DisputeRuling,
+  type FormattedTransactionStatus,
+} from "model/Transaction";
 import type { Evidence } from "model/Evidence";
 
 export const mapTransactionStatus = (
   backendStatus: string,
   amountInEscrow?: string
-): "Pending" | "Completed" | "Disputed" | "Unknown" => {
+): FormattedTransactionStatus => {
   switch (backendStatus) {
     case "Resolved":
       return "Completed";
