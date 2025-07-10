@@ -9,13 +9,7 @@ import {
   useWriteMultipleArbitrableTransactionCreateTransaction,
 } from "config/contracts/generated";
 import { useNewTransactionContext } from "context/newTransaction/useNewTransactionContext";
-import {
-  parseUnits,
-  zeroAddress,
-  erc20Abi,
-  BaseError,
-  decodeEventLog,
-} from "viem";
+import { parseUnits, zeroAddress, erc20Abi, decodeEventLog } from "viem";
 import {
   readContract,
   simulateContract,
@@ -34,6 +28,7 @@ import {
 } from "config/contracts/events";
 import { ipfsPost } from "utils/ipfs";
 import { uploadMetaEvidence } from "utils/metaEvidence";
+import { isUserRejectedRequestError } from "utils/common";
 
 export function useCreateTransaction() {
   const client = useClient();
@@ -246,13 +241,8 @@ export function useCreateTransaction() {
       //Log the error to the console for debugging purposes
       console.error(error);
 
-      //Workaround to check if the error is a user rejected request error, as it is known that viem's UserRejectedRequestError does not catch this...
-      const isUserRejectedRequestError =
-        error instanceof BaseError &&
-        (error as BaseError).shortMessage.includes("User rejected the request");
-
       //Do not show error if user rejected the request
-      if (!isUserRejectedRequestError) {
+      if (!isUserRejectedRequestError(error)) {
         setError(
           "Please verify your inputs and try again. If the error persists, please reach out via Discord or Telegram."
         );
