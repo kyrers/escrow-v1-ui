@@ -59,7 +59,7 @@ export default function Summary({
 
       {deadline && (
         <StyledDisplaySmall
-          label="Deadline (UTC)"
+          label="Delivery deadline (UTC)"
           text={formatDeadlineDate(new Date(deadline))}
           Icon={() => <></>}
         />

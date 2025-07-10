@@ -117,7 +117,7 @@ export default function Preview({ back }: Props) {
         />
 
         <StyledDisplaySmall
-          label="Deadline (UTC)"
+          label="Delivery deadline (UTC)"
           text={formatDeadlineDate(parseZonedDateTime(deadline).toDate())}
           Icon={() => <></>}
         />

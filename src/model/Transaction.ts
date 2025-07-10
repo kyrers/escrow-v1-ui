@@ -21,6 +21,8 @@ export enum DisputeRuling {
   "Jurors ruled in favor of the receiver",
 }
 
+export const ONE_WEEK_BUFFER_IN_SECONDS = 604800;
+
 interface BaseTransaction {
   id: bigint;
   createdAt: string;
@@ -43,4 +45,5 @@ export interface Transaction extends BaseTransaction {
   blockExplorerLink: string;
   timeline: TimelineEvent[];
   status: number;
+  timeoutWithoutBuffer: number;
 }

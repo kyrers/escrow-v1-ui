@@ -4,7 +4,11 @@ import { getLogs, readContract } from "viem/actions";
 import { formatUnits, type Client } from "viem";
 import { ipfsFetch } from "utils/ipfs";
 import type { MetaEvidence } from "model/MetaEvidence";
-import { TransactionStatus, type Transaction } from "model/Transaction";
+import {
+  ONE_WEEK_BUFFER_IN_SECONDS,
+  TransactionStatus,
+  type Transaction,
+} from "model/Transaction";
 import { mapTransactionStatus } from "utils/transaction";
 import { QUERY_KEYS } from "config/queryKeys";
 import {
@@ -203,6 +207,7 @@ function mapToTransaction(
     amountInEscrow: amountInEscrow,
     blockExplorerLink: blockExplorerLink,
     timeline: timelineEvents,
+    timeoutWithoutBuffer: metaEvidence.timeout - ONE_WEEK_BUFFER_IN_SECONDS,
   };
 }
 

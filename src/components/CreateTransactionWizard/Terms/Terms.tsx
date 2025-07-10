@@ -3,6 +3,7 @@ import {
   Datepicker,
   FileUploader,
   TextArea,
+  Tooltip,
 } from "@kleros/ui-components-library";
 import { useNewTransactionContext } from "context/newTransaction/useNewTransactionContext";
 import {
@@ -17,6 +18,8 @@ import {
   parseZonedDateTime,
 } from "@internationalized/date";
 import { formatFileName } from "utils/common";
+import { IconButton } from "components/Common/Buttons/IconButton";
+import InfoCircleOutline from "assets/info-circle-outline.svg?react";
 
 const StyledTextArea = styled(TextArea)`
   width: 500px;
@@ -45,6 +48,11 @@ const CustomFormElementContainer = styled.div`
   width: 500px;
 
   ${mobileResponsive}
+`;
+
+const DeadlineInfoContainer = styled.div`
+  display: flex;
+  align-items: center;
 `;
 
 const StyledLabel = styled.label`
@@ -105,7 +113,16 @@ export default function Terms({ next, back }: Props) {
       />
 
       <CustomFormElementContainer>
-        <StyledLabel htmlFor="deadline">Deadline (Local time)</StyledLabel>
+        <DeadlineInfoContainer>
+          <StyledLabel htmlFor="deadline">
+            Delivery deadline (Local time)
+          </StyledLabel>
+
+          <Tooltip text="This is the deadline for the delivery of the goods or services. There is a 1-week buffer period after, during which the transaction can be resolved by the buyer, or disputes can be raised.">
+            <IconButton small icon={<InfoCircleOutline />} text="" />
+          </Tooltip>
+        </DeadlineInfoContainer>
+
         <StyledDatepicker
           name="deadline"
           minValue={now(getLocalTimeZone())}
