@@ -16,7 +16,7 @@ interface ExtraData {
   Address?: string;
   Blockchain?: string;
   "Cryptoasset Description"?: string;
-  "Due Date (Local Time)"?: string;
+  "Due Date (Local Time)"?: string; //This is optional to maintain backwards compatibility. It is required in the new frontend.
   "Contract Information"?: string;
 }
 

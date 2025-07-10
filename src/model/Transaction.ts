@@ -20,6 +20,8 @@ export enum DisputeRuling {
   "Jurors ruled in favor of the sender",
   "Jurors ruled in favor of the receiver",
 }
+//This value is used in the old frontend to indicate no timeout, so it is necessary to maintain backwards compatibility.
+export const NO_TIMEOUT_VALUE_OLD_FRONTEND = 8640000000000000;
 
 export const ONE_WEEK_BUFFER_IN_SECONDS = 604800;
 
