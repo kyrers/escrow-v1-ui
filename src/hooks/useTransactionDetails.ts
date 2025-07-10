@@ -5,6 +5,7 @@ import { formatUnits, type Client } from "viem";
 import { ipfsFetch } from "utils/ipfs";
 import type { MetaEvidence } from "model/MetaEvidence";
 import {
+  NO_TIMEOUT_VALUE_OLD_FRONTEND,
   ONE_WEEK_BUFFER_IN_SECONDS,
   TransactionStatus,
   type Transaction,
@@ -186,6 +187,30 @@ function mapToTransaction(
   blockExplorerLink: string,
   timelineEvents: TimelineEvent[]
 ): Transaction {
+  //The timeout is not required in the old frontend, and a placeholder value is used instead.
+  const isTimeoutPlaceholder =
+    metaEvidence.timeout === NO_TIMEOUT_VALUE_OLD_FRONTEND;
+
+  //Due to complex timeout calculations in the old frontend, we need to adjust the timeout to maintain backwards compatibility.
+  const wasCreatedInOldFrontend =
+    metaEvidence.timeout < lastInteraction || isTimeoutPlaceholder;
+
+  if (wasCreatedInOldFrontend) {
+    //If the timeout is not a placeholder, we need to replicate the timeout calculation of the old frontend.
+    if (!isTimeoutPlaceholder) {
+      metaEvidence.timeout = lastInteraction + metaEvidence.timeout;
+    } else {
+      //If the timeout is a placeholder, we must consider the due date.
+      //However, the due date is not required in the old frontend.
+      //So as a last resort, we fallback to the last interaction.
+      //This is not ideal, but it's the best we can do to maintain backwards compatibility.
+      metaEvidence.timeout = metaEvidence.extraData["Due Date (Local Time)"]
+        ? new Date(metaEvidence.extraData["Due Date (Local Time)"]).getTime() /
+          1000
+        : lastInteraction;
+    }
+  }
+
   return {
     id: id,
     disputeId: disputeId,
@@ -203,11 +228,13 @@ function mapToTransaction(
       TransactionStatus[status],
       amountInEscrow
     ),
-    lastInteraction: Number(lastInteraction),
+    lastInteraction: lastInteraction,
     amountInEscrow: amountInEscrow,
     blockExplorerLink: blockExplorerLink,
     timeline: timelineEvents,
-    timeoutWithoutBuffer: metaEvidence.timeout - ONE_WEEK_BUFFER_IN_SECONDS,
+    timeoutWithoutBuffer: wasCreatedInOldFrontend
+      ? metaEvidence.timeout // No buffer for old frontend transactions, because the timeout is not required there.
+      : metaEvidence.timeout - ONE_WEEK_BUFFER_IN_SECONDS,
   };
 }
 
@@ -295,7 +322,7 @@ export function useTransactionDetails({ id, contractAddress }: Props) {
         contractAddress,
         metaEvidence,
         details[details.length - 1] as number, // status
-        details[details.length - 2] as number, //last interaction
+        Number(details[details.length - 2]), //last interaction
         amountInEscrow,
         blockExplorerLink,
         timelineEvents
