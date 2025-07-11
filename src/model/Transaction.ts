@@ -1,0 +1,51 @@
+import type { MetaEvidence } from "./MetaEvidence";
+import type { TimelineEvent } from "./TimelineEvent";
+
+export enum TransactionStatus {
+  NoDispute,
+  WaitingSender,
+  WaitingReceiver,
+  DisputeCreated,
+  Resolved,
+}
+
+export type FormattedTransactionStatus =
+  | "Pending"
+  | "Completed"
+  | "Disputed"
+  | "Unknown";
+
+export enum DisputeRuling {
+  "Jurors refused to arbitrate",
+  "Jurors ruled in favor of the sender",
+  "Jurors ruled in favor of the receiver",
+}
+//This value is used in the old frontend to indicate no timeout, so it is necessary to maintain backwards compatibility.
+export const NO_TIMEOUT_VALUE_OLD_FRONTEND = 8640000000000000;
+
+export const ONE_WEEK_BUFFER_IN_SECONDS = 604800;
+
+interface BaseTransaction {
+  id: bigint;
+  createdAt: string;
+  lastInteraction: number;
+  arbitrableAddress: string;
+  metaEvidence: MetaEvidence;
+  formattedStatus: FormattedTransactionStatus;
+}
+
+//Used for cards
+export interface TransactionMini extends BaseTransaction {
+  userPartyLabel: string;
+  otherPartyAddress: string;
+}
+
+//Used for detailed view
+export interface Transaction extends BaseTransaction {
+  amountInEscrow: string;
+  disputeId: bigint;
+  blockExplorerLink: string;
+  timeline: TimelineEvent[];
+  status: number;
+  timeoutWithoutBuffer: number;
+}
