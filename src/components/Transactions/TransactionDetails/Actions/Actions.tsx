@@ -1,6 +1,7 @@
 import { type Transaction, TransactionStatus } from "model/Transaction";
 import Pay from "./Pay/Pay";
 import styled from "styled-components";
+import Reimburse from "./Reimburse/Reimburse";
 
 const Container = styled.div`
   display: flex;
@@ -26,10 +27,27 @@ export default function Actions({ transaction, isBuyer }: Props) {
     !isInBufferPeriod &&
     !hasTimedOut;
 
+  //Show reimburse button to the seller if the transaction is not in dispute, not in buffer period, and not timed out
+  const showReimburseButton =
+    !isBuyer &&
+    transaction.status === TransactionStatus.NoDispute &&
+    !isInBufferPeriod &&
+    !hasTimedOut;
+
   return (
     <Container>
       {showPayButton && (
         <Pay
+          transactionId={transaction.id}
+          contractAddress={transaction.arbitrableAddress}
+          escrowAmount={Number(transaction.amountInEscrow)}
+          ticker={transaction.metaEvidence.token?.ticker ?? "ETH"}
+          decimals={Number(transaction.metaEvidence.token?.decimals ?? 18)}
+        />
+      )}
+
+      {showReimburseButton && (
+        <Reimburse
           transactionId={transaction.id}
           contractAddress={transaction.arbitrableAddress}
           escrowAmount={Number(transaction.amountInEscrow)}
