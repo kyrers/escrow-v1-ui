@@ -1,8 +1,4 @@
-import {
-  AlertMessage,
-  Button,
-  NumberField,
-} from "@kleros/ui-components-library";
+import { Button } from "@kleros/ui-components-library";
 import { useQueryClient } from "@tanstack/react-query";
 import { StyledModal } from "components/Common/Modal/StyledModal";
 import {
@@ -13,23 +9,16 @@ import {
 } from "config/contracts/generated";
 import { QUERY_KEYS } from "config/queryKeys";
 import { useMemo, useState } from "react";
-import styled from "styled-components";
 import { isUserRejectedRequestError } from "utils/common";
 import { parseUnits } from "viem";
 import { waitForTransactionReceipt } from "viem/actions";
 import { useAccount, useClient } from "wagmi";
-
-const StyledNumberField = styled(NumberField)`
-  width: 100%;
-`;
-
-const StyledP = styled.p`
-  font-weight: bold;
-`;
-
-const StyledButton = styled(Button)`
-  align-self: center;
-`;
+import {
+  StyledForm,
+  StyledNumberField,
+  StyledP,
+} from "../Common/StyledElements/StyledElements";
+import ErrorAlert from "../Common/ErrorAlert/ErrorAlert";
 
 interface Props {
   transactionId: bigint;
@@ -80,7 +69,8 @@ export default function Reimburse({
   const { writeContractAsync: reimburseTokenTransaction } =
     useWriteMultipleArbitrableTokenTransactionReimburse();
 
-  const handleReimburse = async () => {
+  const handleReimburse = async (event: React.FormEvent) => {
+    event.preventDefault();
     setIsError(false);
 
     if (!client) {
@@ -147,13 +137,7 @@ export default function Reimburse({
         isDismissable
         onOpenChange={() => setIsOpen(false)}
       >
-        {isError && (
-          <AlertMessage
-            title="Error creating transaction"
-            msg="Transaction simulation failed. Please verify you have enough funds to pay for gas. If the error persists, please reach out via Discord or Telegram."
-            variant="error"
-          />
-        )}
+        {isError && <ErrorAlert />}
 
         <StyledP>
           Current amount in escrow: {escrowAmount} {ticker}
@@ -164,34 +148,36 @@ export default function Reimburse({
           The amount that remains can still be disputed.
         </p>
 
-        <StyledNumberField
-          value={amount}
-          onChange={(value) => setAmount(isNaN(value) ? 0 : value)}
-          isRequired
-          label="Amount to reimburse"
-          name="amount"
-          placeholder="Amount"
-          validate={(value) =>
-            value > 0 && value <= escrowAmount
-              ? true
-              : "Amount must be greater than 0, but not greater than the escrow amount."
-          }
-          minValue={0}
-          showFieldError
-          formatOptions={{
-            //Prevent automatic rounding of very small amounts
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 18,
-          }}
-        />
+        <StyledForm onSubmit={handleReimburse}>
+          <StyledNumberField
+            value={amount}
+            onChange={(value) => setAmount(isNaN(value) ? 0 : value)}
+            isRequired
+            label="Amount to reimburse"
+            name="amount"
+            placeholder="Amount"
+            validate={(value) =>
+              value > 0 && value <= escrowAmount
+                ? true
+                : "Amount must be greater than 0, but not greater than the escrow amount."
+            }
+            minValue={0}
+            showFieldError
+            formatOptions={{
+              //Prevent automatic rounding of very small amounts
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 18,
+            }}
+          />
 
-        <StyledButton
-          text="Send"
-          small
-          isDisabled={isReimbursing || amount <= 0 || amount > escrowAmount}
-          isLoading={isReimbursing}
-          onPress={handleReimburse}
-        />
+          <Button
+            text="Send"
+            small
+            isDisabled={isReimbursing}
+            isLoading={isReimbursing}
+            type="submit"
+          />
+        </StyledForm>
       </StyledModal>
 
       <Button small text="Reimburse" onPress={() => setIsOpen(true)} />
