@@ -144,8 +144,8 @@ export default function Reimburse({
         </StyledP>
 
         <p>
-          You can fully or partially reimburse the other party. <br />
-          The amount that remains can still be disputed.
+          You can fully or partially reimburse the other party. The amount that
+          remains can still be disputed.
         </p>
 
         <StyledForm onSubmit={handleReimburse}>

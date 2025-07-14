@@ -155,7 +155,7 @@ export default function TransactionDetails({ id, contractAddress }: Props) {
         sender={transaction.metaEvidence.sender}
         receiver={transaction.metaEvidence.receiver}
         deadline={transaction.metaEvidence.extraData["Due Date (Local Time)"]}
-        expiryTime={transaction.metaEvidence.timeout}
+        expiryTime={transaction.expiryTimestamp}
       />
 
       <DefaultDivider />

@@ -10,7 +10,7 @@ import {
   ButtonContainer,
   mobileResponsive,
   StyledForm,
-} from "../StyledForm/StyledForm";
+} from "../../Common/Form/StyledForm";
 import styled from "styled-components";
 import {
   getLocalTimeZone,
@@ -41,7 +41,7 @@ const StyledFileUploader = styled(FileUploader)`
   ${mobileResponsive}
 `;
 
-const CustomFormElementContainer = styled.div`
+const CustomFormFieldContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -112,13 +112,13 @@ export default function Terms({ next, back }: Props) {
         showFieldError
       />
 
-      <CustomFormElementContainer>
+      <CustomFormFieldContainer>
         <DeadlineInfoContainer>
           <StyledLabel htmlFor="deadline">
             Delivery deadline (Local time)
           </StyledLabel>
 
-          <Tooltip text="This is the deadline for the delivery of the goods or services. There is a 1-week buffer period after, during which the transaction can be resolved by the buyer, or disputes can be raised.">
+          <Tooltip text="This is the deadline for the delivery of the goods or services. There is a buffer period after this date (approximately 1 week, depending on when the transaction is processed). The exact expiry date will be visible in the transaction details page.">
             <IconButton small icon={<InfoCircleOutline />} text="" />
           </Tooltip>
         </DeadlineInfoContainer>
@@ -131,9 +131,9 @@ export default function Terms({ next, back }: Props) {
           time
           isRequired
         />
-      </CustomFormElementContainer>
+      </CustomFormFieldContainer>
 
-      <CustomFormElementContainer>
+      <CustomFormFieldContainer>
         <StyledLabel htmlFor="agreement">
           Upload an agreement PDF (optional)
         </StyledLabel>
@@ -146,7 +146,7 @@ export default function Terms({ next, back }: Props) {
           }
           acceptedFileTypes={["application/pdf"]}
         />
-      </CustomFormElementContainer>
+      </CustomFormFieldContainer>
 
       <ButtonContainer>
         <Button small text="Back" onPress={back} />
