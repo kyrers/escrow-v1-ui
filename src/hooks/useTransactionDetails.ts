@@ -6,7 +6,6 @@ import { ipfsFetch } from "utils/ipfs";
 import type { MetaEvidence } from "model/MetaEvidence";
 import {
   NO_TIMEOUT_VALUE_OLD_FRONTEND,
-  ONE_WEEK_BUFFER_IN_SECONDS,
   TransactionStatus,
   type Transaction,
 } from "model/Transaction";
@@ -187,29 +186,21 @@ function mapToTransaction(
   blockExplorerLink: string,
   timelineEvents: TimelineEvent[]
 ): Transaction {
-  //The timeout is not required in the old frontend, and a placeholder value is used instead.
-  const isTimeoutPlaceholder =
+  //The timeout is not required in the old frontend and a placeholder value is used instead.
+  const isLegacyTimeout =
     metaEvidence.timeout === NO_TIMEOUT_VALUE_OLD_FRONTEND;
 
-  //Due to complex timeout calculations in the old frontend, we need to adjust the timeout to maintain backwards compatibility.
-  const wasCreatedInOldFrontend =
-    metaEvidence.timeout < lastInteraction || isTimeoutPlaceholder;
+  //The due date is not required in the old frontend. As a last resort, we fallback to the last interaction.
+  //Not ideal, but it's the best we can do to maintain backwards compatibility.
+  const deadlineTimestamp = metaEvidence.extraData["Due Date (Local Time)"]
+    ? new Date(metaEvidence.extraData["Due Date (Local Time)"]).getTime() / 1000
+    : lastInteraction;
 
-  if (wasCreatedInOldFrontend) {
-    //If the timeout is not a placeholder, we need to replicate the timeout calculation of the old frontend.
-    if (!isTimeoutPlaceholder) {
-      metaEvidence.timeout = lastInteraction + metaEvidence.timeout;
-    } else {
-      //If the timeout is a placeholder, we must consider the due date.
-      //However, the due date is not required in the old frontend.
-      //So as a last resort, we fallback to the last interaction.
-      //This is not ideal, but it's the best we can do to maintain backwards compatibility.
-      metaEvidence.timeout = metaEvidence.extraData["Due Date (Local Time)"]
-        ? new Date(metaEvidence.extraData["Due Date (Local Time)"]).getTime() /
-          1000
-        : lastInteraction;
-    }
-  }
+  //If the transaction is a legacy transaction without a timeout, we fallback to the deadline timestamp.
+  //If the transaction is not a legacy transaction, we use the timeout.
+  const expiryTimestamp = isLegacyTimeout
+    ? deadlineTimestamp
+    : lastInteraction + metaEvidence.timeout;
 
   return {
     id: id,
@@ -232,9 +223,9 @@ function mapToTransaction(
     amountInEscrow: amountInEscrow,
     blockExplorerLink: blockExplorerLink,
     timeline: timelineEvents,
-    timeoutWithoutBuffer: wasCreatedInOldFrontend
-      ? metaEvidence.timeout // No buffer for old frontend transactions, because the timeout is not required there.
-      : metaEvidence.timeout - ONE_WEEK_BUFFER_IN_SECONDS,
+    isLegacyTimeout: isLegacyTimeout,
+    deadlineTimestamp: deadlineTimestamp,
+    expiryTimestamp: expiryTimestamp,
   };
 }
 
