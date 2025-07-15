@@ -21,9 +21,9 @@ import {
   metaEvidenceEvent,
   paymentEvent,
   rulingEvent,
-  type ContractEventLogs,
   type EvidenceLogs,
   type MetaEvidenceLogs,
+  type TimelineEventLogs,
 } from "config/contracts/events";
 import type { Evidence } from "model/Evidence";
 import type { TimelineEvent } from "model/TimelineEvent";
@@ -268,7 +268,7 @@ export function useTransactionDetails({ id, contractAddress }: Props) {
       );
 
       const timelineEvents = formatTimelineEvents(
-        timelineEventsLogs as ContractEventLogs,
+        timelineEventsLogs as TimelineEventLogs,
         evidenceLogs,
         evidenceContent as Evidence[],
         blockTimestamps,

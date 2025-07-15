@@ -6,8 +6,8 @@ import {
   disputeEvent,
   appealDecisionEvent,
   evidenceEvent,
-  type ContractEventLogs,
   type EvidenceLogs,
+  type TimelineEventLogs,
 } from "config/contracts/events";
 import { formatUnits } from "viem";
 import { addressToShortString, getBlockExplorerLink } from "./common";
@@ -35,7 +35,7 @@ export const mapTransactionStatus = (
 };
 
 export function formatTimelineEvents(
-  timelineEvents: ContractEventLogs,
+  timelineEvents: TimelineEventLogs,
   evidenceLogs: EvidenceLogs,
   evidenceContent: Evidence[],
   blockTimestamps: bigint[],
@@ -53,6 +53,7 @@ export function formatTimelineEvents(
           date: new Date(
             parseInt(blockTimestamps[index].toString()) * 1000
           ).toLocaleDateString("en-US", {
+            timeZone: "UTC",
             year: "numeric",
             month: "short",
             day: "numeric",
@@ -70,6 +71,7 @@ export function formatTimelineEvents(
           date: new Date(
             parseInt(blockTimestamps[index].toString()) * 1000
           ).toLocaleDateString("en-US", {
+            timeZone: "UTC",
             year: "numeric",
             month: "short",
             day: "numeric",
@@ -86,6 +88,7 @@ export function formatTimelineEvents(
           date: new Date(
             parseInt(blockTimestamps[index].toString()) * 1000
           ).toLocaleDateString("en-US", {
+            timeZone: "UTC",
             year: "numeric",
             month: "short",
             day: "numeric",
@@ -110,6 +113,7 @@ export function formatTimelineEvents(
           date: new Date(
             parseInt(blockTimestamps[index].toString()) * 1000
           ).toLocaleDateString("en-US", {
+            timeZone: "UTC",
             year: "numeric",
             month: "short",
             day: "numeric",
@@ -129,6 +133,7 @@ export function formatTimelineEvents(
           date: new Date(
             parseInt(blockTimestamps[index].toString()) * 1000
           ).toLocaleDateString("en-US", {
+            timeZone: "UTC",
             year: "numeric",
             month: "short",
             day: "numeric",
@@ -143,6 +148,7 @@ export function formatTimelineEvents(
           date: new Date(
             parseInt(blockTimestamps[index].toString()) * 1000
           ).toLocaleDateString("en-US", {
+            timeZone: "UTC",
             year: "numeric",
             month: "short",
             day: "numeric",
@@ -152,3 +158,14 @@ export function formatTimelineEvents(
     }
   });
 }
+
+export const formatDeadlineDate = (deadline: Date) => {
+  return deadline.toLocaleDateString("en-US", {
+    timeZone: "UTC",
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};

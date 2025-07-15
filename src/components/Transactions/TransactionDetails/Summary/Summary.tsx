@@ -1,6 +1,7 @@
 import styled from "styled-components";
-import { DisplaySmall } from "@kleros/ui-components-library";
+import { StyledDisplaySmall } from "components/Common/Form/StyledDisplaySmall";
 import { addressToShortString } from "utils/common";
+import { formatDeadlineDate } from "utils/transaction";
 
 const Container = styled.div`
   display: flex;
@@ -13,22 +14,13 @@ const Container = styled.div`
   }
 `;
 
-const StyledDisplaySmall = styled(DisplaySmall)`
-  overflow: hidden;
-  white-space: nowrap;
-  height: fit-content;
-
-  label {
-    font-weight: bold;
-  }
-`;
-
 interface Props {
   originalAmount: string;
   escrowAmount: string;
   ticker: string;
   sender: string;
   receiver: string;
+  deadline?: string;
 }
 
 export default function Summary({
@@ -37,6 +29,7 @@ export default function Summary({
   ticker,
   sender,
   receiver,
+  deadline,
 }: Props) {
   return (
     <Container>
@@ -57,11 +50,20 @@ export default function Summary({
         text={addressToShortString(sender)}
         Icon={() => <></>}
       />
+
       <StyledDisplaySmall
         label="Receiver"
         text={addressToShortString(receiver)}
         Icon={() => <></>}
       />
+
+      {deadline && (
+        <StyledDisplaySmall
+          label="Deadline (UTC)"
+          text={formatDeadlineDate(new Date(deadline))}
+          Icon={() => <></>}
+        />
+      )}
     </Container>
   );
 }

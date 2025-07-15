@@ -9,7 +9,7 @@ interface Token {
 interface RulingOptions {
   descriptions: string[];
   titles: string[];
-  type: "single-select" | "multiple-select0" | "uint" | "int" | "string";
+  type: string;
 }
 
 interface ExtraData {
@@ -19,6 +19,8 @@ interface ExtraData {
   "Due Date (Local Time)"?: string;
   "Contract Information"?: string;
 }
+
+export const NO_TIMEOUT_VALUE = 8640000000000000;
 
 export interface MetaEvidence {
   aliases: Record<string, string>;

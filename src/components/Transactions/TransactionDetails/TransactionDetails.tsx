@@ -4,13 +4,15 @@ import {
   Box,
   CustomTimeline,
 } from "@kleros/ui-components-library";
-import Agreement from "./Agreement/Agreement";
 import { useTransactionDetails } from "hooks/useTransactionDetails";
 import { BaseSkeleton } from "components/Common/Skeleton/BaseSkeleton";
-import Header from "./Header/Header";
 import { useMemo } from "react";
-import Summary from "./Summary/Summary";
 import { getIpfsUrl } from "utils/ipfs";
+import { DefaultDivider } from "components/Common/Dividers/DefaultDivider";
+import Agreement from "./Agreement/Agreement";
+import TitleAndType from "./TitleAndType/TitleAndType";
+import Header from "./Header/Header";
+import Summary from "./Summary/Summary";
 
 const StyledSkeleton = styled(BaseSkeleton)`
   height: 100%;
@@ -29,10 +31,6 @@ const StyledBox = styled(Box)`
   align-self: center;
 `;
 
-const StyledHr = styled.hr`
-  border: 1px solid ${({ theme }) => theme.colors.primaryBlue};
-`;
-
 const StyledA = styled.a`
   font-size: 12px;
   color: ${({ theme }) => theme.colors.secondaryText};
@@ -40,11 +38,6 @@ const StyledA = styled.a`
   &:hover {
     text-decoration: underline;
   }
-`;
-
-type TimelineItems = React.ComponentProps<typeof CustomTimeline>["items"];
-const StyledTimeline = styled(CustomTimeline)`
-  align-self: center;
 `;
 
 const TimelinePartyContainer = styled.div`
@@ -57,6 +50,7 @@ const StyledSpan = styled.span`
   color: ${({ theme }) => theme.colors.secondaryText};
 `;
 
+type TimelineItems = React.ComponentProps<typeof CustomTimeline>["items"];
 interface Props {
   id: bigint;
   contractAddress: `0x${string}`;
@@ -130,15 +124,12 @@ export default function TransactionDetails({ id, contractAddress }: Props) {
         createdAt={transaction.createdAt}
       />
 
-      <StyledHr />
-
-      <Agreement
+      <TitleAndType
+        escrowType={transaction.metaEvidence.subCategory}
         title={transaction.metaEvidence.title}
-        description={transaction.metaEvidence.description}
-        agreementDocURI={transaction.metaEvidence.fileURI}
       />
 
-      <StyledHr />
+      <DefaultDivider />
 
       <Summary
         originalAmount={transaction.metaEvidence.amount}
@@ -146,9 +137,19 @@ export default function TransactionDetails({ id, contractAddress }: Props) {
         ticker={transaction.metaEvidence.token?.ticker ?? "ETH"}
         sender={transaction.metaEvidence.sender}
         receiver={transaction.metaEvidence.receiver}
+        deadline={transaction.metaEvidence.extraData["Due Date (Local Time)"]}
       />
 
-      <StyledTimeline items={timelineItems} />
+      <DefaultDivider />
+
+      <Agreement
+        description={transaction.metaEvidence.description}
+        agreementDocURI={transaction.metaEvidence.fileURI}
+      />
+
+      <DefaultDivider />
+
+      <CustomTimeline items={timelineItems} />
     </StyledBox>
   );
 }
