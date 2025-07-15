@@ -108,10 +108,13 @@ export default function TransactionDetails({ id, contractAddress }: Props) {
 
   const shouldShowActions = useMemo(() => {
     //Only show actions if the user is a party and the transaction is not completed
+    //Use lowercase for comparisons to account for situations where users copy addresses not checksummed
     return (
       transaction &&
-      (transaction.metaEvidence.sender === address ||
-        transaction.metaEvidence.receiver === address) &&
+      (transaction.metaEvidence.sender.toLowerCase() ===
+        address?.toLowerCase() ||
+        transaction.metaEvidence.receiver.toLowerCase() ===
+          address?.toLowerCase()) &&
       transaction.formattedStatus !== "Completed"
     );
   }, [transaction, address]);
@@ -172,7 +175,10 @@ export default function TransactionDetails({ id, contractAddress }: Props) {
 
           <Actions
             transaction={transaction}
-            isBuyer={transaction.metaEvidence.sender === address}
+            isBuyer={
+              transaction.metaEvidence.sender.toLowerCase() ===
+              address?.toLowerCase()
+            }
           />
         </>
       )}
