@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useNewTransactionContext } from "context/newTransaction/useNewTransactionContext";
 import { useCreateTransaction } from "hooks/useCreateTransaction";
 import { AlertMessage, Button, Card } from "@kleros/ui-components-library";
-import { ButtonContainer } from "../StyledForm/StyledForm";
+import { ButtonContainer } from "../../Common/Form/StyledForm";
 import { addressToShortString } from "utils/common";
 import { formatDeadlineDate } from "utils/transaction";
 import { parseZonedDateTime } from "@internationalized/date";
@@ -120,7 +120,7 @@ export default function Preview({ back }: Props) {
         />
 
         <StyledDisplaySmall
-          label="Escrow expiry (UTC)"
+          label="Estimated escrow expiry (UTC)"
           text={formatDeadlineDate(
             parseZonedDateTime(deadline)
               .add({ seconds: ONE_WEEK_BUFFER_IN_SECONDS })

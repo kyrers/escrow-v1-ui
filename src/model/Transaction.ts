@@ -47,5 +47,7 @@ export interface Transaction extends BaseTransaction {
   blockExplorerLink: string;
   timeline: TimelineEvent[];
   status: number;
-  timeoutWithoutBuffer: number;
+  isLegacyTimeout: boolean;
+  deadlineTimestamp: number;
+  expiryTimestamp: number;
 }

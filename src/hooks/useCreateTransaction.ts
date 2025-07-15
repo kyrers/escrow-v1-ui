@@ -69,10 +69,16 @@ export function useCreateTransaction() {
     : MULTIPLE_ARBITRABLE_TRANSACTION_ADDRESS[chain!.id]?.[court];
 
   const formattedAmount = parseUnits(amount.toString(), token.decimals);
-  const formattedDeadline = parseZonedDateTime(deadline).toDate().toISOString();
-  const timeoutWithBuffer =
-    Math.floor(new Date(formattedDeadline).getTime() / 1000) +
-    ONE_WEEK_BUFFER_IN_SECONDS;
+  const deadlineDate = parseZonedDateTime(deadline).toDate();
+  const formattedDeadline = deadlineDate.toISOString();
+
+  //The contract expects the timeout to be the difference between when the transaction is created and the actual date we want it to expire, not an actual expiry date.
+  //If we just sent the actual expiry date, executing transactions would be pratically impossible, because the contract checks if the now - lastInteraction >= timeout.
+  //To work around this, we calculate the difference between the deadline and the current time, and add the buffer period. This way, we can ensure that the timeout is always after the deadline.
+  const now = Math.floor(Date.now() / 1000);
+  const deadlineInSeconds = Math.floor(deadlineDate.getTime() / 1000);
+  const secondsUntilDeadline = deadlineInSeconds - now;
+  const timeoutWithBuffer = secondsUntilDeadline + ONE_WEEK_BUFFER_IN_SECONDS;
 
   const handleIPFSUploads = async () => {
     //Upload agreement file to IPFS, if it exists
