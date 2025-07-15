@@ -11,6 +11,7 @@ import Agreement from "components/Transactions/TransactionDetails/Agreement/Agre
 import TitleAndType from "components/Transactions/TransactionDetails/TitleAndType/TitleAndType";
 import { DefaultDivider } from "components/Common/Dividers/DefaultDivider";
 import { StyledDisplaySmall } from "components/Common/Form/StyledDisplaySmall";
+import { ONE_WEEK_BUFFER_IN_SECONDS } from "model/Transaction";
 
 interface Props {
   back: () => void;
@@ -44,14 +45,10 @@ const StyledButtonContainer = styled(ButtonContainer)`
 `;
 
 const SummaryContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 4px;
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.sm}) {
-    justify-content: center;
-  }
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  justify-items: center;
 `;
 
 export default function Preview({ back }: Props) {
@@ -117,8 +114,18 @@ export default function Preview({ back }: Props) {
         />
 
         <StyledDisplaySmall
-          label="Deadline (UTC)"
+          label="Delivery deadline (UTC)"
           text={formatDeadlineDate(parseZonedDateTime(deadline).toDate())}
+          Icon={() => <></>}
+        />
+
+        <StyledDisplaySmall
+          label="Escrow expiry (UTC)"
+          text={formatDeadlineDate(
+            parseZonedDateTime(deadline)
+              .add({ seconds: ONE_WEEK_BUFFER_IN_SECONDS })
+              .toDate()
+          )}
           Icon={() => <></>}
         />
       </SummaryContainer>

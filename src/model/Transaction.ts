@@ -9,11 +9,21 @@ export enum TransactionStatus {
   Resolved,
 }
 
+export type FormattedTransactionStatus =
+  | "Pending"
+  | "Completed"
+  | "Disputed"
+  | "Unknown";
+
 export enum DisputeRuling {
   "Jurors refused to arbitrate",
   "Jurors ruled in favor of the sender",
   "Jurors ruled in favor of the receiver",
 }
+//This value is used in the old frontend to indicate no timeout, so it is necessary to maintain backwards compatibility.
+export const NO_TIMEOUT_VALUE_OLD_FRONTEND = 8640000000000000;
+
+export const ONE_WEEK_BUFFER_IN_SECONDS = 604800;
 
 interface BaseTransaction {
   id: bigint;
@@ -21,7 +31,7 @@ interface BaseTransaction {
   lastInteraction: number;
   arbitrableAddress: string;
   metaEvidence: MetaEvidence;
-  status: string;
+  formattedStatus: FormattedTransactionStatus;
 }
 
 //Used for cards
@@ -36,4 +46,6 @@ export interface Transaction extends BaseTransaction {
   disputeId: bigint;
   blockExplorerLink: string;
   timeline: TimelineEvent[];
+  status: number;
+  timeoutWithoutBuffer: number;
 }

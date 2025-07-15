@@ -9,13 +9,7 @@ import {
   useWriteMultipleArbitrableTransactionCreateTransaction,
 } from "config/contracts/generated";
 import { useNewTransactionContext } from "context/newTransaction/useNewTransactionContext";
-import {
-  parseUnits,
-  zeroAddress,
-  erc20Abi,
-  BaseError,
-  decodeEventLog,
-} from "viem";
+import { parseUnits, zeroAddress, erc20Abi, decodeEventLog } from "viem";
 import {
   readContract,
   simulateContract,
@@ -23,6 +17,8 @@ import {
 } from "viem/actions";
 import { useAccount, useWriteContract, useClient } from "wagmi";
 import { getBalance } from "wagmi/actions";
+import { parseZonedDateTime } from "@internationalized/date";
+import { ONE_WEEK_BUFFER_IN_SECONDS } from "model/Transaction";
 import { wagmiConfig } from "config/reown";
 import { MULTIPLE_ARBITRABLE_TOKEN_TRANSACTION_ABI } from "config/contracts/abi/mutlipleArbitrableTokenTransaction";
 import { MULTIPLE_ARBITRABLE_TRANSACTION_ABI } from "config/contracts/abi/multipleArbitrableTransaction";
@@ -32,6 +28,7 @@ import {
 } from "config/contracts/events";
 import { ipfsPost } from "utils/ipfs";
 import { uploadMetaEvidence } from "utils/metaEvidence";
+import { isUserRejectedRequestError } from "utils/common";
 
 export function useCreateTransaction() {
   const client = useClient();
@@ -72,6 +69,10 @@ export function useCreateTransaction() {
     : MULTIPLE_ARBITRABLE_TRANSACTION_ADDRESS[chain!.id]?.[court];
 
   const formattedAmount = parseUnits(amount.toString(), token.decimals);
+  const formattedDeadline = parseZonedDateTime(deadline).toDate().toISOString();
+  const timeoutWithBuffer =
+    Math.floor(new Date(formattedDeadline).getTime() / 1000) +
+    ONE_WEEK_BUFFER_IN_SECONDS;
 
   const handleIPFSUploads = async () => {
     //Upload agreement file to IPFS, if it exists
@@ -85,7 +86,8 @@ export function useCreateTransaction() {
       amount: amount.toString(),
       arbitrableAddress: contractAddress,
       description,
-      deadline,
+      deadline: formattedDeadline,
+      timeout: timeoutWithBuffer,
       receiverAddress,
       senderAddress,
       escrowType,
@@ -135,7 +137,7 @@ export function useCreateTransaction() {
       args: [
         formattedAmount,
         token.address,
-        0n,
+        BigInt(timeoutWithBuffer),
         receiverAddress as `0x${string}`,
         metaEvidenceURI,
       ],
@@ -154,7 +156,11 @@ export function useCreateTransaction() {
       abi: MULTIPLE_ARBITRABLE_TRANSACTION_ABI,
       address: contractAddress as `0x${string}`,
       functionName: "createTransaction",
-      args: [0n, receiverAddress as `0x${string}`, metaEvidenceURI],
+      args: [
+        BigInt(timeoutWithBuffer),
+        receiverAddress as `0x${string}`,
+        metaEvidenceURI,
+      ],
       value: formattedAmount,
     } as const;
 
@@ -235,13 +241,8 @@ export function useCreateTransaction() {
       //Log the error to the console for debugging purposes
       console.error(error);
 
-      //Workaround to check if the error is a user rejected request error, as it is known that viem's UserRejectedRequestError does not catch this...
-      const isUserRejectedRequestError =
-        error instanceof BaseError &&
-        (error as BaseError).shortMessage.includes("User rejected the request");
-
       //Do not show error if user rejected the request
-      if (!isUserRejectedRequestError) {
+      if (!isUserRejectedRequestError(error)) {
         setError(
           "Please verify your inputs and try again. If the error persists, please reach out via Discord or Telegram."
         );
