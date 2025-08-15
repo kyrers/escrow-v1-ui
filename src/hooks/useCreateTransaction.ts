@@ -225,6 +225,13 @@ export function useCreateTransaction() {
       return;
     }
 
+    //Check if the deadline is still in the future, for situations where the user stays in the form long enough for the selected deadline to now be in the past
+    if (deadlineDate.getTime() < new Date().getTime()) {
+      setError("Deadline is in the past");
+      setIsCreating(false);
+      return;
+    }
+
     try {
       const metaEvidenceURI = await handleIPFSUploads();
 
