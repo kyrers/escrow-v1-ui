@@ -11,7 +11,7 @@
     "generate": "wagmi generate"
   },
   "dependencies": {
-    "@kleros/ui-components-library": "^3.4.5",
+    "@kleros/ui-components-library": "^3.6.0",
     "@reown/appkit": "^1.7.6",
     "@reown/appkit-adapter-wagmi": "^1.7.6",
     "@tanstack/react-query": "^5.76.1",

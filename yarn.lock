@@ -1341,9 +1341,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@kleros/ui-components-library@npm:^3.4.5":
-  version: 3.4.5
-  resolution: "@kleros/ui-components-library@npm:3.4.5"
+"@kleros/ui-components-library@npm:^3.6.0":
+  version: 3.6.0
+  resolution: "@kleros/ui-components-library@npm:3.6.0"
   dependencies:
     "@internationalized/date": "npm:^3.7.0"
     bignumber.js: "npm:^9.1.2"
@@ -1364,7 +1364,7 @@ __metadata:
     react-dom: ^18.0.0
     react-is: ^18.0.0
     tailwindcss: ^4.0.11
-  checksum: 10c0/ef3d0851dabe2454444cfe5ea43bb74db65a0257321165e41c3b26128bf99ef43d44baf67735246237b9345aee280431d3d88f5088d5cf0103edce47e03fe9ff
+  checksum: 10c0/d76e481f3e72f76d40037a784ac65f97c411ce287fb7720aebb084f81032681b7f19cad0bd5269a719db148069dd18f17280083bd44938225e7e1dd3d51547d4
   languageName: node
   linkType: hard
 
@@ -6325,7 +6325,7 @@ __metadata:
   resolution: "escrow-v1-ui@workspace:."
   dependencies:
     "@eslint/js": "npm:^9.25.0"
-    "@kleros/ui-components-library": "npm:^3.4.5"
+    "@kleros/ui-components-library": "npm:^3.6.0"
     "@reown/appkit": "npm:^1.7.6"
     "@reown/appkit-adapter-wagmi": "npm:^1.7.6"
     "@tanstack/react-query": "npm:^5.76.1"
