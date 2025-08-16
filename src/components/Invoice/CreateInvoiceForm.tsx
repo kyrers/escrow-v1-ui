@@ -4,20 +4,32 @@ import { useInvoices } from '../../hooks/useInvoices';
 import type { CreateInvoiceRequest } from '../../types/invoice';
 
 const PageContainer = styled.div`
-  min-height: calc(100vh - 140px); /* Subtract header (60px) + footer (60px) + extra spacing (20px) */
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 40px 20px 100px 20px; /* Increased bottom padding for better footer separation */
+  min-height: calc(100vh - 140px);
+  background: ${({ theme }) => theme.mode === 'dark' 
+    ? 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)'
+    : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+  };
+  padding: 40px 20px 100px 20px;
 `;
 
 const FormContainer = styled.div`
   max-width: 600px;
   margin: 0 auto;
-  background: rgba(255, 255, 255, 0.95);
+  background: ${({ theme }) => theme.mode === 'dark' 
+    ? 'rgba(30, 41, 59, 0.95)'
+    : 'rgba(255, 255, 255, 0.95)'
+  };
   backdrop-filter: blur(20px);
   border-radius: 24px;
   padding: 40px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: ${({ theme }) => theme.mode === 'dark'
+    ? '0 20px 40px rgba(0, 0, 0, 0.3)'
+    : '0 20px 40px rgba(0, 0, 0, 0.1)'
+  };
+  border: 1px solid ${({ theme }) => theme.mode === 'dark'
+    ? 'rgba(51, 65, 85, 0.3)'
+    : 'rgba(255, 255, 255, 0.2)'
+  };
 `;
 
 const Header = styled.div`
@@ -28,7 +40,10 @@ const Header = styled.div`
 const Title = styled.h1`
   font-size: 32px;
   font-weight: 800;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: ${({ theme }) => theme.mode === 'dark'
+    ? 'linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%)'
+    : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+  };
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -36,7 +51,7 @@ const Title = styled.h1`
 `;
 
 const Subtitle = styled.p`
-  color: #64748b;
+  color: ${({ theme }) => theme.mode === 'dark' ? '#94a3b8' : '#64748b'};
   font-size: 16px;
   margin: 0;
   line-height: 1.6;
@@ -57,7 +72,7 @@ const FormSection = styled.div`
 const SectionTitle = styled.h3`
   font-size: 18px;
   font-weight: 600;
-  color: #334155;
+  color: ${({ theme }) => theme.mode === 'dark' ? '#e2e8f0' : '#334155'};
   margin: 0;
 `;
 
@@ -69,7 +84,7 @@ const FormGroup = styled.div`
 
 const Label = styled.label`
   font-weight: 600;
-  color: #475569;
+  color: ${({ theme }) => theme.mode === 'dark' ? '#cbd5e1' : '#475569'};
   font-size: 14px;
   display: flex;
   align-items: center;
@@ -83,63 +98,72 @@ const Required = styled.span`
 
 const Input = styled.input`
   padding: 16px 20px;
-  border: 2px solid #e2e8f0;
+  border: 2px solid ${({ theme }) => theme.mode === 'dark' ? '#475569' : '#e2e8f0'};
   border-radius: 12px;
   font-size: 16px;
   transition: all 0.3s ease;
-  background: white;
-  color: #334155;
+  background: ${({ theme }) => theme.mode === 'dark' ? '#1e293b' : 'white'};
+  color: ${({ theme }) => theme.mode === 'dark' ? '#e2e8f0' : '#334155'};
 
   &:focus {
     outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    border-color: ${({ theme }) => theme.mode === 'dark' ? '#60a5fa' : '#667eea'};
+    box-shadow: ${({ theme }) => theme.mode === 'dark'
+      ? '0 0 0 3px rgba(96, 165, 250, 0.1)'
+      : '0 0 0 3px rgba(102, 126, 234, 0.1)'
+    };
     transform: translateY(-1px);
   }
 
   &::placeholder {
-    color: #94a3b8;
+    color: ${({ theme }) => theme.mode === 'dark' ? '#64748b' : '#94a3b8'};
   }
 `;
 
 const TextArea = styled.textarea`
   padding: 16px 20px;
-  border: 2px solid #e2e8f0;
+  border: 2px solid ${({ theme }) => theme.mode === 'dark' ? '#475569' : '#e2e8f0'};
   border-radius: 12px;
   font-size: 16px;
   min-height: 120px;
   resize: vertical;
   transition: all 0.3s ease;
-  background: white;
-  color: #334155;
+  background: ${({ theme }) => theme.mode === 'dark' ? '#1e293b' : 'white'};
+  color: ${({ theme }) => theme.mode === 'dark' ? '#e2e8f0' : '#334155'};
   font-family: inherit;
 
   &:focus {
     outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    border-color: ${({ theme }) => theme.mode === 'dark' ? '#60a5fa' : '#667eea'};
+    box-shadow: ${({ theme }) => theme.mode === 'dark'
+      ? '0 0 0 3px rgba(96, 165, 250, 0.1)'
+      : '0 0 0 3px rgba(102, 126, 234, 0.1)'
+    };
     transform: translateY(-1px);
   }
 
   &::placeholder {
-    color: #94a3b8;
+    color: ${({ theme }) => theme.mode === 'dark' ? '#64748b' : '#94a3b8'};
   }
 `;
 
 const Select = styled.select`
   padding: 16px 20px;
-  border: 2px solid #e2e8f0;
+  border: 2px solid ${({ theme }) => theme.mode === 'dark' ? '#475569' : '#e2e8f0'};
   border-radius: 12px;
   font-size: 16px;
-  background: white;
-  color: #334155;
+  background: ${({ theme }) => theme.mode === 'dark' ? '#1e293b' : 'white'};
+  color: ${({ theme }) => theme.mode === 'dark' ? '#e2e8f0' : '#334155'};
   transition: all 0.3s ease;
   cursor: pointer;
 
   &:focus {
     outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    border-color: ${({ theme }) => theme.mode === 'dark' ? '#60a5fa' : '#667eea'};
+    box-shadow: ${({ theme }) => theme.mode === 'dark'
+      ? '0 0 0 3px rgba(96, 165, 250, 0.1)'
+      : '0 0 0 3px rgba(102, 126, 234, 0.1)'
+    };
     transform: translateY(-1px);
   }
 `;
@@ -156,10 +180,12 @@ const Row = styled.div`
 
 const Button = styled.button<{ disabled?: boolean }>`
   padding: 18px 32px;
-  background: ${props => props.disabled 
-    ? 'linear-gradient(135deg, #cbd5e1 0%, #94a3b8 100%)' 
-    : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-  };
+  background: ${({ theme, disabled }) => {
+    if (disabled) return 'linear-gradient(135deg, #cbd5e1 0%, #94a3b8 100%)';
+    return theme.mode === 'dark'
+      ? 'linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%)'
+      : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+  }};
   color: white;
   border: none;
   border-radius: 12px;
@@ -167,11 +193,21 @@ const Button = styled.button<{ disabled?: boolean }>`
   font-weight: 700;
   cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  box-shadow: ${({ theme, disabled }) => {
+    if (disabled) return 'none';
+    return theme.mode === 'dark'
+      ? '0 4px 12px rgba(96, 165, 250, 0.3)'
+      : '0 4px 12px rgba(102, 126, 234, 0.3)';
+  }};
 
   &:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    box-shadow: ${({ theme, disabled }) => {
+      if (disabled) return 'none';
+      return theme.mode === 'dark'
+        ? '0 8px 20px rgba(96, 165, 250, 0.4)'
+        : '0 8px 20px rgba(102, 126, 234, 0.4)';
+    }};
   }
 
   &:active:not(:disabled) {
@@ -186,12 +222,28 @@ const Message = styled.div<{ type: 'error' | 'success' }>`
   display: flex;
   align-items: center;
   gap: 12px;
-  background: ${props => props.type === 'error' 
-    ? 'linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%)' 
-    : 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)'
-  };
-  color: ${props => props.type === 'error' ? '#dc2626' : '#16a34a'};
-  border: 1px solid ${props => props.type === 'error' ? '#fecaca' : '#bbf7d0'};
+  background: ${({ theme, type }) => {
+    if (type === 'error') {
+      return theme.mode === 'dark'
+        ? 'linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%)'
+        : 'linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%)';
+    }
+    return theme.mode === 'dark'
+      ? 'linear-gradient(135deg, #064e3b 0%, #065f46 100%)'
+      : 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)';
+  }};
+  color: ${({ theme, type }) => {
+    if (type === 'error') {
+      return theme.mode === 'dark' ? '#fca5a5' : '#dc2626';
+    }
+    return theme.mode === 'dark' ? '#a7f3d0' : '#16a34a';
+  }};
+  border: 1px solid ${({ theme, type }) => {
+    if (type === 'error') {
+      return theme.mode === 'dark' ? '#7f1d1d' : '#fecaca';
+    }
+    return theme.mode === 'dark' ? '#064e3b' : '#bbf7d0';
+  }};
 `;
 
 const MessageIcon = styled.span`

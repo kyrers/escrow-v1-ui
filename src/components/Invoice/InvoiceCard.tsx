@@ -6,17 +6,23 @@ import type { Invoice } from '../../types/invoice';
 import { InvoiceStatus } from '../../types/invoice';
 
 const Card = styled.div`
-  background: white;
+  background: ${({ theme }) => theme.mode === 'dark' ? '#1e293b' : 'white'};
   border-radius: 20px;
   padding: 32px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  border: 1px solid #e2e8f0;
+  box-shadow: ${({ theme }) => theme.mode === 'dark'
+    ? '0 4px 6px rgba(0, 0, 0, 0.3)'
+    : '0 4px 6px rgba(0, 0, 0, 0.05)'
+  };
+  border: 1px solid ${({ theme }) => theme.mode === 'dark' ? '#334155' : '#e2e8f0'};
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
 
   &:hover {
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+    box-shadow: ${({ theme }) => theme.mode === 'dark'
+      ? '0 12px 24px rgba(0, 0, 0, 0.4)'
+      : '0 12px 24px rgba(0, 0, 0, 0.1)'
+    };
     transform: translateY(-4px);
   }
 
@@ -49,9 +55,9 @@ const Header = styled.div`
 
 const InvoiceId = styled.div`
   font-size: 12px;
-  color: #64748b;
+  color: ${({ theme }) => theme.mode === 'dark' ? '#94a3b8' : '#64748b'};
   font-family: 'Monaco', 'Menlo', monospace;
-  background: #f1f5f9;
+  background: ${({ theme }) => theme.mode === 'dark' ? '#334155' : '#f1f5f9'};
   padding: 6px 12px;
   border-radius: 8px;
   font-weight: 500;
@@ -93,7 +99,7 @@ const StatusIcon = styled.span`
 const Amount = styled.div`
   font-size: 32px;
   font-weight: 800;
-  color: #1e293b;
+  color: ${({ theme }) => theme.mode === 'dark' ? '#f1f5f9' : '#1e293b'};
   margin-bottom: 20px;
   display: flex;
   align-items: center;
@@ -106,14 +112,14 @@ const CurrencyIcon = styled.span`
 `;
 
 const Description = styled.div`
-  color: #475569;
+  color: ${({ theme }) => theme.mode === 'dark' ? '#cbd5e1' : '#475569'};
   margin-bottom: 24px;
   line-height: 1.6;
   font-size: 16px;
-  background: #f8fafc;
+  background: ${({ theme }) => theme.mode === 'dark' ? '#334155' : '#f8fafc'};
   padding: 16px;
   border-radius: 12px;
-  border-left: 4px solid #667eea;
+  border-left: 4px solid ${({ theme }) => theme.mode === 'dark' ? '#60a5fa' : '#667eea'};
 `;
 
 const Details = styled.div`
@@ -122,7 +128,7 @@ const Details = styled.div`
   gap: 20px;
   margin-bottom: 28px;
   padding: 20px;
-  background: #f8fafc;
+  background: ${({ theme }) => theme.mode === 'dark' ? '#334155' : '#f8fafc'};
   border-radius: 16px;
 `;
 
@@ -133,7 +139,7 @@ const DetailItem = styled.div`
 `;
 
 const DetailLabel = styled.span`
-  color: #64748b;
+  color: ${({ theme }) => theme.mode === 'dark' ? '#94a3b8' : '#64748b'};
   font-weight: 600;
   font-size: 12px;
   text-transform: uppercase;
@@ -141,7 +147,7 @@ const DetailLabel = styled.span`
 `;
 
 const DetailValue = styled.span`
-  color: #1e293b;
+  color: ${({ theme }) => theme.mode === 'dark' ? '#e2e8f0' : '#1e293b'};
   font-family: 'Monaco', 'Menlo', monospace;
   font-size: 14px;
   word-break: break-all;
