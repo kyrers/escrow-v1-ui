@@ -3,3 +3,22 @@ body {
   min-height: 100vh;
   margin: 0;
 }
+
+/* Ensure proper layout structure */
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Prevent content from overlapping with footer */
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Ensure footer stays at bottom */
+footer {
+  margin-top: auto;
+}

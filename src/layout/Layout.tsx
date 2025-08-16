@@ -6,16 +6,23 @@ import { Outlet } from "react-router";
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  height: 100vh;
+  min-height: 100vh;
   width: 100%;
+`;
+
+const MainContent = styled.main`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 `;
 
 export default function Layout() {
   return (
     <Container>
       <Header />
-      <Outlet />
+      <MainContent>
+        <Outlet />
+      </MainContent>
       <Footer />
     </Container>
   );
